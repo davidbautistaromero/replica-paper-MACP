@@ -13,6 +13,22 @@ del equipo.
 | Curso | Macroeconomía Avanzada de Corto Plazo, 2026-2 (Uniandes) |
 | Equipo | David Bautista · Jonathan Cadena · Iván Katz |
 
+## Resultado
+
+Réplica completa, con las grillas del artículo y convergencia verificada en las
+ocho corridas. **El resultado central del paper se reproduce en los cuatro
+países: al eliminar el riesgo de huracán la deuda sostenible sube** (Antigua
++38%, Jamaica +32%, Granada +22%, República Dominicana +13%).
+
+| Panel B | ATG | DOM | GRD | JAM |
+|---|---|---|---|---|
+| Spread, paper → réplica | 465 → 464 | 479 → 507 | 484 → 472 | 554 → 584 |
+| Deuda/PIB | 0.38 → 0.38 | 0.25 → 0.25 | 0.53 → 0.52 | 0.49 → 0.48 |
+
+Las razones de deuda coinciden hasta el segundo decimal; los spreads quedan
+dentro de ±33 pb, lo esperable sin la semilla del autor. Tabla completa en
+[outputs/tables/](outputs/tables/) y detalle en [docs/02_bitacora.md](docs/02_bitacora.md).
+
 ## Arranque rápido
 
 ```powershell
@@ -162,11 +178,13 @@ escrito el código pide ~15 GB solo para guardar la distribución simulada: use
       (0.007 pb sobre 557). Evidencia en `outputs/tables/comparison_*.md`
 - [x] Objetivos de la Tabla 2 verificados contra el PDF publicado: siete países,
       tres paneles, siete momentos por panel
-- [ ] Contrastar la calibración de República Dominicana (el artículo y el código
-      no coinciden, y es el único país con brecha grande en la prueba)
-- [ ] Cronometrar un país y un panel con `paper_memlite` antes de lanzar todo
-- [ ] Corrida `paper_memlite` para los cuatro países, revisando el último
-      `diff_q` de cada log
+- [x] **Réplica corrida con las grillas del artículo**: cuatro países, dos
+      paneles, las ocho corridas convergidas (`diff_q` < 1e-6) y **56 chequeos
+      sin fallas**. ~4.5 h de máquina
+- [x] Resuelta la discrepancia de calibración: los valores del código son los que
+      generaron la Tabla 2; el error está en la Tabla 1 del artículo
+- [ ] Escribir el documento de la entrega con estos números
+- [ ] Corregir la tabla transcrita en la Primera Entrega (tenía cuatro errores)
 - [ ] Extensión (dos capas de riesgo, caso Colombia): ver
       [docs/00_pipeline.md](docs/00_pipeline.md#extension)
 

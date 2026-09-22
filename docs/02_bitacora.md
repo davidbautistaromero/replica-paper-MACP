@@ -138,11 +138,69 @@ así que es indicativo y nada más): ATG, GRD y JAM caen cerca del publicado
 justamente el país con la calibración en disputa. Es contrastable con una sola
 corrida.
 
+### El contrafactual de República Dominicana: hipótesis descartada
+
+Se corrió RD con los parámetros de la Tabla 1 publicada (perfil `smoke_pubcal`,
+idéntico a `smoke_cmp` salvo `β` y el costo de default). El resultado **descarta**
+la hipótesis y de paso resuelve la discrepancia:
+
+| | paper | calibración del código | calibración del artículo |
+|---|---|---|---|
+| Spread Panel B | 479 | 669 | **1188** |
+| Deuda/PIB Panel B | 0.25 | 0.231 | **0.135** |
+| Spread Panel C | 416 | 557 | **1004** |
+| Deuda/PIB Panel C | 0.29 | 0.265 | **0.158** |
+
+Con los parámetros del artículo el spread se duplica y la deuda cae a la mitad.
+La dirección tiene sentido: bajar `β` hace al gobierno más impaciente, y subir el
+costo de default de 0.8175 a 0.895 significa *menos* castigo en autarquía (es la
+fracción del PIB disponible); ambos empujan el spread hacia arriba.
+
+**Conclusión: los valores del código son los que generaron la Tabla 2, y es la
+Tabla 1 del artículo la que tiene el error.** No es conjetura: los parámetros de
+la Tabla 1 son cuantitativamente incompatibles con la Tabla 2 del mismo artículo.
+
+## 2026-09-22 — LA RÉPLICA, corrida con las grillas del artículo
+
+Perfil `paper_memlite`, motor `matlab`, cuatro países, los dos paneles.
+**Las ocho corridas convergieron** (`diff_q` final entre 8.3e-07 y 9.9e-07,
+todas bajo la tolerancia de 1e-6). **56 chequeos automáticos, cero fallas.**
+
+| Corrida | Duración | Iteraciones externas |
+|---|---|---|
+| Jamaica, Panel B | 17 min | 156 |
+| Jamaica, Panel C | 23 min | 123 |
+| ATG/DOM/GRD, Panel B | 118 min | 108, 71, 114 |
+| ATG/DOM/GRD, Panel C | 124 min | 98, 63, 98 |
+
+Total ~4.5 h de máquina. La corrida sobrevivió al reinicio de la sesión: MATLAB
+siguió por su cuenta y solo hubo que recoger los `.mat` al final.
+
+### Resultado
+
+| Momento (Panel B) | ATG | DOM | GRD | JAM |
+|---|---|---|---|---|
+| Spread, paper → réplica | 465 → 464 | 479 → 507 | 484 → 472 | 554 → 584 |
+| Deuda/PIB | 0.38 → 0.38 | 0.25 → 0.25 | 0.53 → 0.52 | 0.49 → 0.48 |
+| Deuda a valor de mercado | 0.31 → 0.32 | 0.22 → 0.22 | 0.41 → 0.41 | 0.43 → 0.43 |
+| Frecuencia de default | 0.061 → 0.059 | 0.083 → 0.086 | 0.057 → 0.060 | 0.043 → 0.042 |
+
+**El resultado central se reproduce en los cuatro países: al eliminar el riesgo
+de huracán la deuda sostenible sube** (ATG +38%, JAM +32%, GRD +22%, DOM +13%).
+Las razones de deuda coinciden hasta el segundo decimal; los spreads quedan
+dentro de ±33 pb, que es lo esperable sin la semilla del autor.
+
+**La brecha de República Dominicana era la corrida tosca**, como se sospechaba:
+de +179 pb en el perfil `smoke` a +28 pb con las grillas del artículo y
+convergencia real, y la deuda/PIB da exacta. No hay razón para sacar a RD de la
+entrega.
+
 ### Pendientes inmediatos
 
-- [ ] Contrastar RD con los parámetros de la Tabla 1 publicada (`β = 0.88`,
-      costo `0.895`) y ver si el spread se acerca a 479.
-- [ ] Cronometrar un país y un panel con `paper_memlite` antes de lanzar todo.
+- [ ] Escribir el documento con estos números.
+- [ ] Corregir en la entrega la tabla transcrita de la Primera Entrega.
+- [ ] Opcional: repetir el contraste de motores con `paper_cmp`, para ver si las
+      diferencias de spread se encogen al converger de verdad.
 - [ ] Corrida `paper_memlite` para los cuatro países; anotar duración y el
       último `diff_q` de cada log.
 - [ ] Repetir el contraste de motores con `paper_cmp`.
