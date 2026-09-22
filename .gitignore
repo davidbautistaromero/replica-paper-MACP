@@ -20,6 +20,11 @@ outputs/figures/*
 !outputs/tables/checks_paper*
 !outputs/figures/table2_comparison_paper*
 
+# Articulo publicado: acceso restringido (Elsevier). Se guarda localmente para
+# poder trabajar y cotejar la Tabla 2, pero NO se versiona ni se redistribuye.
+# El working paper del Federal Reserve Board si esta en el repo: es acceso abierto.
+paper/*_NO_VERSIONAR.pdf
+
 # MATLAB
 *.asv
 *.mat
