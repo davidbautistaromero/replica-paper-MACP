@@ -1,0 +1,14 @@
+# Normalizacion por defecto (LF en el repositorio).
+* text=auto
+
+# Excepcion: el codigo del autor se versiona byte a byte, sin tocar los fines
+# de linea, para que siga siendo identico al zip de Mendeley en cualquier
+# plataforma. Es la base de la garantia "vendor/ no se edita nunca".
+src/matlab/vendor/** -text
+
+# Binarios
+*.pdf binary
+*.zip binary
+*.mat binary
+*.npz binary
+*.png binary
