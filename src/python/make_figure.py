@@ -53,7 +53,7 @@ def main() -> int:
 
     fig, axes = plt.subplots(
         len(panels), len(moments),
-        figsize=(2.35 * len(moments), 1.35 * len(panels) + 1.1),
+        figsize=(2.35 * len(moments), 1.35 * len(panels) + 1.7),
         squeeze=False,
     )
     fig.patch.set_facecolor(SURFACE)
@@ -104,11 +104,13 @@ def main() -> int:
     nota = f"Perfil {args.profile} - motor {args.engine}"
     if not cfg["profiles"][args.profile].get("reportable", False):
         nota += " - corrida de prueba, no reportable"
-    fig.suptitle("Tabla 2: momentos simulados, paper vs. replica", fontsize=11,
-                 color=INK, x=0.02, ha="left", y=0.995)
-    fig.text(0.02, 0.945, nota, fontsize=8, color=INK_MUTED, ha="left")
+    # Titulo y bajada como texto suelto, no como suptitle: asi el espacio que
+    # ocupan se reserva con `rect` y no se montan sobre las celdas ni entre si.
+    fig.text(0.02, 0.975, "Tabla 2: momentos simulados, paper vs. replica",
+             fontsize=11.5, color=INK, ha="left", va="top")
+    fig.text(0.02, 0.915, nota, fontsize=8, color=INK_MUTED, ha="left", va="top")
 
-    fig.tight_layout(rect=(0.03, 0.05, 1, 0.92))
+    fig.tight_layout(rect=(0.03, 0.06, 1, 0.88))
     ensure_dirs(OUT_FIGURES)
     for ext in ("png", "pdf"):
         dest = OUT_FIGURES / f"table2_comparison_{etiqueta}.{ext}"
