@@ -89,6 +89,30 @@ def test_parches_calzan_en_todos_los_perfiles():
                 assert "shocks_X(:,counter)" in codigo
 
 
+def test_sendero_de_markov_duplica_el_estado_inicial():
+    """El bloque 'markov function' del autor tiene dos rarezas que el port copia.
+
+    Guarda el estado ANTES de transitar y luego vuelve a anteponer el inicial,
+    de modo que el sendero es [s0, s0, s1, ...]: el inicial sale dos veces y el
+    ultimo sorteo se descarta. No es inocuo: el estado exogeno inicial tiene el
+    indice de huracan a mitad de la grilla, asi que la economia sin riesgo de
+    huracan igual registra dos periodos con dano.
+
+    Se comprueba con una cadena deterministica (i -> i+1 mod 4), donde el
+    sendero se puede escribir a mano.
+    """
+    import numpy as np
+    from model.simulate import markov_path
+
+    P = np.zeros((4, 4))
+    for i in range(4):
+        P[i, (i + 1) % 4] = 1.0
+    T = 6
+    sendero = markov_path(P, 1, np.full(T - 1, 0.5))
+    assert len(sendero) == T
+    assert list(sendero) == [1, 1, 2, 3, 0, 1]
+
+
 def test_calibracion_del_port():
     """Contraste puntual contra los valores escritos en el codigo del autor."""
     cfg = common.load_config()

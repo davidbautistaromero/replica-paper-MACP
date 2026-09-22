@@ -25,6 +25,14 @@ def markov_path(P: np.ndarray, i0: int, X: np.ndarray) -> np.ndarray:
 
     El original normaliza las filas que no suman exactamente 1 (la truncacion de
     Tauchen deja errores del orden de 1e-16) e imprime un aviso por cada una.
+
+    fidelidad: el autor guarda el estado ANTES de transitar (`state(:,k)=s`) y
+    despues vuelve a antepuner el inicial (`i_x_sim = [init_x_sim i_x_sim]`), de
+    modo que el sendero es [s0, s0, s1, ..., s_{T-2}]: el estado inicial aparece
+    dos veces y el ultimo sorteo se descarta. No es inocuo. El estado exogeno
+    inicial tiene el indice de huracan a mitad de la grilla, asi que incluso la
+    economia sin riesgo de huracan arranca con dos periodos de dano, y eso se ve
+    en la frecuencia simulada del Panel C (2/T_sim en vez de 0).
     """
     P = np.array(P, dtype=float, copy=True)
     sumas = P.sum(axis=1)
@@ -35,14 +43,14 @@ def markov_path(P: np.ndarray, i0: int, X: np.ndarray) -> np.ndarray:
     cum = P.cumsum(axis=1)
     n_estados = P.shape[0]
     path = np.empty(len(X) + 1, dtype=np.int64)
-    path[0] = i0
     s = i0
     for k, u in enumerate(X):
+        path[k + 1] = s        # guarda ANTES de transitar, como el original
         # primer estado con cum >= u, que es la condicion del original
         s = int(np.searchsorted(cum[s], u, side="left"))
         s = min(s, n_estados - 1)   # blindaje: u > cum[-1] por error de redondeo
-        path[k + 1] = s
-    return path
+    path[0] = i0               # el inicial, antepuesto por segunda vez
+    return path                # [s0, s0, s1, ..., s_{T-2}]; el ultimo s se descarta
 
 
 def _nan(fn, x):
