@@ -1,0 +1,14 @@
+# Calibracion efectivamente usada por el codigo del autor
+# (src/matlab/vendor/climate_persistent_wf.m, lineas 8-80).
+# Corresponde a la version publicada (2022), NO a la Tabla 1 del working paper 2020.
+# Nombres en el codigo: rho_y, sigma_ey, beta, wc_par_asymm (costo de default como
+# fraccion de E[y]), delta (decaimiento de la deuda de largo plazo), sigma_eh,
+# mean_h = 1 - mu_h, p_hu. Comunes: gamma_c=2, lambda=1/3, mu_r=0.0451.
+counter,iso3,rho_y,sigma_ey,beta,output_cost_frac,delta_decay,sigma_eh,mu_h,p_hu
+1,ATG,0.92,0.046,0.915,0.750,0.0824,0.029,0.049,0.103
+2,BLZ,0.99,0.036,0.945,0.540,0.0442,0.028,0.021,0.077
+3,DMA,0.94,0.027,0.9375,0.680,0.0467,0.028,0.098,0.026
+4,DOM,0.88,0.0464,0.895,0.8175,0.1731,0.034,0.040,0.051
+5,GRD,0.91,0.052,0.910,0.697,0.0612,0.052,0.070,0.051
+6,HND,0.83,0.026,0.8575,0.820,0.1639,0.027,0.052,0.051
+7,JAM,0.96,0.026,0.930,0.730,0.0564,0.020,0.023,0.103
