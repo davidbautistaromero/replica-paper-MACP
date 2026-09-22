@@ -47,7 +47,9 @@
 #>
 [CmdletBinding()]
 param(
-  [ValidateSet('paper', 'paper_memlite', 'paper_cmp', 'smoke', 'smoke_memlite', 'smoke_cmp')]
+  # Sin ValidateSet a proposito: la lista de perfiles vive en config/specs.json y
+  # duplicarla aqui solo garantiza que se quede atras. Python valida el nombre y
+  # enumera las opciones disponibles si no existe.
   [string] $Profile = 'paper_memlite',
 
   [ValidateSet('matlab', 'python')]
