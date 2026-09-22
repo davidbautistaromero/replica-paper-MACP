@@ -152,12 +152,17 @@ escrito el código pide ~15 GB solo para guardar la distribución simulada: use
 - [x] Fuentes descargadas y verificadas por hash; paquete del autor en `vendor/`
 - [x] Pipeline de siete etapas, dos motores, seis perfiles
 - [x] Verificaciones estáticas en verde (`python tests\test_static.py`)
-- [ ] **Correr nada todavía** — el motor Python está escrito pero sin ejecutar
-- [ ] Verificar `smoke_cmp:matlab` vs `smoke_cmp:python` (equivalencia de motores)
-- [ ] Verificar `smoke` vs `smoke_memlite` (equivalencia de `memlite`)
+- [x] Pipeline validado de punta a punta con el perfil `smoke`
+- [x] `memlite` ≡ código del autor: **48 de 48 momentos idénticos**, diferencia
+      relativa máxima 0
+- [x] Motor Python ≡ MATLAB: frecuencias y pérdida de PIB exactamente iguales,
+      deuda/PIB a ~1e-11, spreads hasta 1.2e-5 de diferencia relativa
+      (0.007 pb sobre 557). Evidencia en `outputs/tables/comparison_*.md`
 - [ ] Transcribir los objetivos de ATG y GRD desde el PDF publicado
 - [ ] Cotejar los objetivos de DOM y JAM (`verified=FALSE`)
-- [ ] Corrida `paper_memlite` para los cuatro países
+- [ ] Cronometrar un país y un panel con `paper_memlite` antes de lanzar todo
+- [ ] Corrida `paper_memlite` para los cuatro países, revisando el último
+      `diff_q` de cada log
 - [ ] Extensión (dos capas de riesgo, caso Colombia): ver
       [docs/00_pipeline.md](docs/00_pipeline.md#extension)
 

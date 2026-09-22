@@ -116,7 +116,9 @@ comparten grillas y semilla, así que sus momentos deben coincidir:
 python src\python\compare_runs.py --left smoke:matlab --right smoke_memlite:matlab --strict
 ```
 
-Resultado de esta verificación: ver [02_bitacora.md](02_bitacora.md).
+Resultado (2026-09-22): **48 de 48 momentos idénticos**, diferencia relativa
+máxima 0. Detalle en [02_bitacora.md](02_bitacora.md) y en
+`outputs/tables/comparison_smoke-matlab_vs_smoke_memlite-matlab.md`.
 
 ### 2.7 Dos motores, y cómo se comparan de verdad
 
@@ -151,6 +153,13 @@ Qué esperar: `identico` o `equivalente` (diferencia relativa ≤ 1e-8).
 Diferencias de 1e-12 a 1e-9 son normales, porque el orden de las sumas en punto
 flotante no es idéntico entre el BLAS de MATLAB y el de NumPy. Cualquier cosa
 por encima de 1e-3 es un error de traducción, y hay que buscarlo en `model/`.
+
+Resultado (2026-09-22): frecuencias y pérdida de PIB exactamente iguales;
+default a ~1e-12; deuda/PIB a ~1e-11; los spreads entre 1e-8 y 1.2e-5, que es
+lo esperado porque el spread sale de `1/q` y amplifica el redondeo. La primera
+corrida encontró un error real de traducción —el port no duplicaba el estado
+inicial del sendero, ver [01_modelo.md](01_modelo.md)—, que es exactamente para
+lo que sirve este contraste.
 
 ## 3. Parches {#parches}
 

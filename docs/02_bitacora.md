@@ -50,15 +50,67 @@ Formato sugerido: fecha · perfil · motor · países · resultado · observaci�
   extensión tendrá que tomar capa por capa.
 - **No se corrió nada del modelo** en esta sesión, por pedido explícito.
 
+## 2026-09-22 — primera corrida: pipeline validado y dos equivalencias probadas
+
+**Perfil `smoke`, motor `matlab`, países `entrega1` — las siete etapas en verde.**
+Duración: 3.4 min de MATLAB (1.5 min el Panel B, 1.8 min el Panel C) y 0.4 min
+el resto. Confirmado que el perfil **no converge** a propósito: último
+`diff_q ≈ 9.4e-4` contra `tol_q = 1e-4`, es decir salió por agotar las 25
+iteraciones. Sirve para validar el encadenamiento de etapas, no para números.
+
+Resultado cualitativo, incluso con grillas gruesas: **la deuda sostenible sube
+al eliminar el riesgo de huracán en los cuatro países** (ATG +35.6%, DOM +13.5%,
+GRD +14.4%, JAM +27.3%). Es el resultado central del paper.
+
+**Equivalencia de `memlite`: 48 de 48 momentos idénticos**, diferencia relativa
+máxima `0.000e+00`. Bit a bit. La reescritura que baja la memoria de 15.1 GB a
+1.5 MB no cambia un dígito.
+
+**Equivalencia de motores (`smoke_cmp`, sorteos compartidos):**
+
+| Momento | Diferencia relativa MATLAB vs. Python |
+|---|---|
+| Frecuencia de huracán, pérdida de PIB | exactamente 0 |
+| Frecuencia de default | ~1e-12 |
+| Deuda externa/PIB | ~1e-11 |
+| Spread promedio | 1e-8 a 1.2e-5 (peor caso: 0.007 pb sobre 557 pb) |
+
+41 de 44 momentos comparables salen `identico` o `equivalente`; los 7 `cercano`
+son todos spreads, lo esperado porque el spread sale de `1/q` y amplifica
+diferencias en el orden de las sumas en punto flotante. Los 4 `FALTA` son
+`spread_median_bp` del Panel C, que el script sin huracanes del autor nunca
+asigna y el port sí calcula: asimetría en un momento de diagnóstico, no en la
+Tabla 2. Tiempos: Python 2.3 min contra MATLAB 3.4 min.
+
+Hipótesis a verificar con el perfil del artículo: al converger de verdad
+(`tol_q = 1e-6`) las diferencias de spread deberían encogerse, porque ambos
+motores llegan al mismo punto fijo en vez de quedar en puntos distintos del
+mismo camino.
+
+### Cuatro defectos encontrados y corregidos en esta corrida
+
+1. **Bug propio en el port**: el bloque `markov function` del autor guarda el
+   estado *antes* de transitar y luego vuelve a anteponer el inicial, así que el
+   sendero es `[s0, s0, s1, ...]` —el inicial sale dos veces y el último sorteo
+   se descarta—. El port no lo duplicaba. Se detectó al ver que el Panel C
+   reporta frecuencia de huracán `2/T_sim` en vez de 0: el estado inicial tiene
+   el índice de huracán a mitad de la grilla, así que la economía sin riesgo
+   igual arranca con dos períodos de daño. Cubierto ahora por un test.
+2. `build_table2` fallaba al recorrer el mapa de momentos sin filtrar la clave
+   de documentación.
+3. El aviso de objetivos faltantes se evaluaba sin mirar el panel, y reportaba
+   como faltantes momentos que el paper no publica en ese panel.
+4. El chequeo "Panel C sin huracanes" era demasiado estricto: ahora admite el
+   artefacto del estado inicial (`≤ 2.5/T_sim`) y falla por encima de eso.
+
 ### Pendientes inmediatos
 
-- [ ] Correr `smoke -Engine matlab` completo (etapas 2–7) y anotar el tiempo.
-- [ ] Verificar `memlite`: `compare_runs.py --left smoke:matlab --right smoke_memlite:matlab --strict`.
-- [ ] Verificar motores: `smoke_cmp` con los dos motores y `-CompareWith smoke_cmp:matlab`.
 - [ ] Transcribir los objetivos de ATG y GRD de la Tabla 2 publicada.
 - [ ] Cotejar los de DOM y JAM y pasar `verified` a `TRUE`.
+- [ ] Cronometrar un país y un panel con `paper_memlite` antes de lanzar todo.
 - [ ] Corrida `paper_memlite` para los cuatro países; anotar duración y el
       último `diff_q` de cada log.
+- [ ] Repetir el contraste de motores con `paper_cmp`.
 
 ---
 
