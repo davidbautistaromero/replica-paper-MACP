@@ -127,9 +127,22 @@ def main() -> int:
     (stem.with_suffix(".md")).write_text("\n".join(lineas) + "\n", encoding="utf-8")
     log(f"escritos {stem}.csv/.md")
 
-    malos = int((df["veredicto"].isin(["DIVERGENTE", "FALTA"])).sum())
+    # --strict falla siempre por divergencia. Por ausencia solo si el momento es
+    # una fila de la Tabla 2: hay momentos de diagnostico que una de las dos
+    # implementaciones no calcula (el script sin huracanes del autor, por
+    # ejemplo, nunca asigna medianspread_sim), y esa asimetria no es un error.
+    en_tabla = {m: set(meta["in_panels"]) for m, meta in cfg["moments"].items()
+                if isinstance(meta, dict)}
+    es_tabla = np.array([r.panel in en_tabla.get(r.moment, set()) for r in df.itertuples()])
+    divergen = (df["veredicto"] == "DIVERGENTE").to_numpy()
+    ausentes = (df["veredicto"] == "FALTA").to_numpy()
+    malos = int((divergen | (ausentes & es_tabla)).sum())
+    informativos = int((ausentes & ~es_tabla).sum())
+    if informativos:
+        log(f"{informativos} momento(s) de diagnostico presentes en un solo motor "
+            f"(no cuentan como divergencia)")
     if args.strict and malos:
-        log(f"{malos} momento(s) divergieron o faltan")
+        log(f"{malos} momento(s) divergieron o faltan en la Tabla 2")
         return 1
     return 0
 
