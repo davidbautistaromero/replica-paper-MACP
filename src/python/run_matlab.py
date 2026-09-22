@@ -25,7 +25,7 @@ from pathlib import Path
 from scipy.io import loadmat
 
 from common import (
-    OUT_LOGS, build_dir, ensure_dirs, load_config, log, matlab_version, raw_mat_dir,
+    OUT_LOGS, build_dir, ensure_dirs, load_config, log, matlab_version, raw_path,
     resolve_countries, resolve_profile, shocks_dir, spec_order, specs_only, utc_now,
     write_manifest,
 )
@@ -85,13 +85,15 @@ def preflight(spec_name: str, cfg: dict, prof: dict, profile_name: str,
 
 
 def run_spec(spec_name: str, cfg: dict, prof: dict, profile_name: str,
-             counters: list[int], matlab_exe: str) -> dict:
+             counters: list[int], matlab_exe: str, tag_run: str = "") -> dict:
     spec = specs_only(cfg)[spec_name]
-    bdir = build_dir(profile_name)
+    bdir = build_dir(profile_name, tag_run)
     preflight(spec_name, cfg, prof, profile_name, counters, bdir)
 
-    ensure_dirs(OUT_LOGS, raw_mat_dir(profile_name))
-    log_path = OUT_LOGS / f"matlab_{profile_name}_{spec_name}.log"
+    destino = raw_path(cfg, profile_name, 'matlab', spec_name, tag_run)
+    ensure_dirs(OUT_LOGS, destino.parent)
+    etiqueta = f"_{tag_run}" if tag_run else ""
+    log_path = OUT_LOGS / f"matlab_{profile_name}{etiqueta}_{spec_name}.log"
 
     # -batch: sin escritorio, sin splash, devuelve codigo != 0 si el script falla.
     cmd = [matlab_exe, "-batch", f"run('{spec['vendor_file']}')"]
@@ -113,7 +115,7 @@ def run_spec(spec_name: str, cfg: dict, prof: dict, profile_name: str,
     src_mat = bdir / spec["mat_file"]
     if not src_mat.exists():
         raise SystemExit(f"{spec_name} termino sin producir {spec['mat_file']}. Revise {log_path}.")
-    dst_mat = raw_mat_dir(profile_name) / f"{spec_name}.mat"
+    dst_mat = destino
     shutil.copy2(src_mat, dst_mat)
 
     log(f"{spec_name}: listo en {mins:.1f} min -> {dst_mat}")
@@ -131,12 +133,14 @@ def main() -> int:
     ap.add_argument("--profile", default="paper")
     ap.add_argument("--countries", default="entrega1")
     ap.add_argument("--specs", default="all", help="'all' o nombres separados por coma")
+    ap.add_argument("--tag", default="", help="aisla esta corrida de otras del mismo perfil que corran en paralelo")
     args = ap.parse_args()
 
     cfg = load_config()
     prof = resolve_profile(cfg, args.profile)
     counters = resolve_countries(cfg, args.countries)
     matlab_exe = cfg.get("matlab_exe", "matlab")
+    etiqueta = f"_{args.tag}" if args.tag else ""
 
     todos = spec_order(cfg)
     specs = list(todos) if args.specs == "all" else [s.strip() for s in args.specs.split(",")]
@@ -149,12 +153,14 @@ def main() -> int:
         log(f"AVISO: el perfil '{args.profile}' no es reportable "
             f"(grillas gruesas). Sirve para validar el pipeline, no para la entrega.")
 
-    corridas = [run_spec(s, cfg, prof, args.profile, counters, matlab_exe) for s in specs]
+    corridas = [run_spec(s, cfg, prof, args.profile, counters, matlab_exe, args.tag)
+                for s in specs]
 
-    write_manifest(f"run_{args.profile}_matlab", {
+    write_manifest(f"run_{args.profile}{etiqueta}_matlab", {
         "etapa": "3_run_matlab",
         "motor": "matlab",
         "perfil": args.profile,
+        "etiqueta": args.tag,
         "reportable": prof.get("reportable", False),
         "paises_counter": counters,
         "semilla": cfg["seed"],

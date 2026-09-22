@@ -285,6 +285,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--profile", default="paper")
     ap.add_argument("--countries", default="entrega1")
+    ap.add_argument("--tag", default="", help="directorio de trabajo aparte, para correr en paralelo")
     args = ap.parse_args()
 
     cfg = load_config()
@@ -292,7 +293,7 @@ def main() -> int:
     counters = resolve_countries(cfg, args.countries)
     seed = cfg["seed"]
 
-    bdir = build_dir(args.profile)
+    bdir = build_dir(args.profile, args.tag)
     pdir = bdir / "patches"
     ensure_dirs(bdir, pdir)
 
@@ -343,7 +344,7 @@ def main() -> int:
         }
         log(f"{spec_name}: {len(rules)} parches -> {dest.relative_to(bdir.parents[2])}")
 
-    write_manifest(f"patch_{args.profile}", {
+    write_manifest(f"patch_{args.profile}" + (f"_{args.tag}" if args.tag else ""), {
         "etapa": "2_patch_vendor",
         "perfil": args.profile,
         "grillas": {k: v for k, v in prof.items() if not k.startswith("_")},

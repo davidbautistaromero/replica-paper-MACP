@@ -22,7 +22,7 @@ import numpy as np
 import pandas as pd
 
 from common import (
-    OUT_MOMENTS, ensure_dirs, load_config, load_countries, log, raw_dir, raw_path,
+    OUT_MOMENTS, ensure_dirs, load_config, load_countries, log, raw_dir, raw_paths,
     resolve_engine, specs_only, tag,
 )
 
@@ -82,13 +82,15 @@ def main() -> int:
 
     frames = []
     for spec_name, spec in specs_only(cfg).items():
-        path = raw_path(cfg, args.profile, args.engine, spec_name)
-        if not path.exists():
-            log(f"AVISO: falta {path.name} (no se corrio {spec_name} con motor {args.engine})")
+        rutas = raw_paths(cfg, args.profile, args.engine, spec_name)
+        if not rutas:
+            log(f"AVISO: no hay salidas de {spec_name} con motor {args.engine}")
             continue
-        df = extract_one(path, spec_name, spec, cfg, countries)
-        log(f"{spec_name}: {len(df)} momentos extraidos de {path.name}")
-        frames.append(df)
+        # Puede haber varias: una por corrida etiquetada, cada una con sus paises.
+        for path in rutas:
+            df = extract_one(path, spec_name, spec, cfg, countries)
+            log(f"{spec_name}: {len(df)} momentos extraidos de {path.name}")
+            frames.append(df)
 
     if not frames:
         raise SystemExit(
@@ -97,6 +99,13 @@ def main() -> int:
         )
 
     out = pd.concat(frames, ignore_index=True)
+    dup = out.duplicated(subset=["spec", "iso3", "moment"], keep=False)
+    if dup.any():
+        raise SystemExit(
+            "Hay paises repetidos entre corridas etiquetadas: "
+            f"{sorted(out.loc[dup, 'iso3'].unique())}. Cada etiqueta debe cubrir "
+            "paises distintos, o sobra un .mat viejo en la carpeta de salida."
+        )
     out.insert(0, "engine", args.engine)
     out.insert(0, "profile", args.profile)
     ensure_dirs(OUT_MOMENTS)

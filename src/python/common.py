@@ -95,9 +95,15 @@ def spec_order(cfg: dict) -> list[str]:
 # --------------------------------------------------------------------------- #
 # Rutas derivadas del perfil
 # --------------------------------------------------------------------------- #
-def build_dir(profile: str) -> Path:
-    """Directorio de trabajo de MATLAB para un perfil (codigo parchado + .mat)."""
-    return BUILD_DIR / profile
+def build_dir(profile: str, tag_run: str = "") -> Path:
+    """Directorio de trabajo de MATLAB para un perfil.
+
+    `tag_run` aisla corridas concurrentes del mismo perfil. Hace falta porque los
+    scripts del autor guardan sus .mat en el directorio de trabajo con nombre
+    fijo: dos procesos en la misma carpeta se sobreescriben los artefactos y el
+    Panel C terminaria leyendo el E[y] y los sorteos del pais equivocado.
+    """
+    return BUILD_DIR / (f"{profile}__{tag_run}" if tag_run else profile)
 
 
 def shocks_dir(profile: str) -> Path:
@@ -124,8 +130,24 @@ def raw_dir(cfg: dict, profile: str, engine: str) -> Path:
     return ROOT / "outputs" / resolve_engine(cfg, engine)["raw_dir"] / profile
 
 
-def raw_path(cfg: dict, profile: str, engine: str, spec_name: str) -> Path:
-    return raw_dir(cfg, profile, engine) / f"{spec_name}{resolve_engine(cfg, engine)['ext']}"
+def raw_path(cfg: dict, profile: str, engine: str, spec_name: str,
+             tag_run: str = "") -> Path:
+    ext = resolve_engine(cfg, engine)["ext"]
+    sufijo = f"__{tag_run}" if tag_run else ""
+    return raw_dir(cfg, profile, engine) / f"{spec_name}{sufijo}{ext}"
+
+
+def raw_paths(cfg: dict, profile: str, engine: str, spec_name: str) -> list[Path]:
+    """Todas las salidas de una especificacion: la corrida completa y las
+    parciales por etiqueta. Se juntan en la extraccion, porque cada una trae
+    solo las filas de sus paises."""
+    ext = resolve_engine(cfg, engine)["ext"]
+    d = raw_dir(cfg, profile, engine)
+    if not d.exists():
+        return []
+    return sorted(p for p in d.iterdir()
+                  if p.suffix == ext and (p.stem == spec_name
+                                          or p.stem.startswith(f"{spec_name}__")))
 
 
 def tag(profile: str, engine: str) -> str:
