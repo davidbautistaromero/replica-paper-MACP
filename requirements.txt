@@ -1,0 +1,5 @@
+# Etapas 3-6 del pipeline (Python 3.11+). MATLAB es dependencia externa: ver README.
+numpy>=1.26
+scipy>=1.11
+pandas>=2.1
+matplotlib>=3.8

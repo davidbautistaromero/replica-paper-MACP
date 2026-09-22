@@ -1,0 +1,32 @@
+# Artefactos generados: reproducibles corriendo el pipeline.
+# Se ignora el CONTENIDO, no el directorio, para que los .gitkeep sobrevivan
+# a un clone y la estructura de carpetas quede documentada en el repo.
+build/*
+outputs/raw_mat/*
+outputs/raw_npz/*
+outputs/logs/*
+!**/.gitkeep
+
+# MATLAB
+*.asv
+*.mat
+slprj/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.ipynb_checkpoints/
+
+# LaTeX
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+
+# Sistema
+Thumbs.db
+desktop.ini
+.DS_Store
