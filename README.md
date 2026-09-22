@@ -136,10 +136,12 @@ deuda de largo plazo y otra calibración (deuda/PIB de Jamaica: 0.16 en el WP,
 0.53 en el publicado). El objetivo de la réplica es la tabla del **artículo
 publicado**. Ver [paper/NOTES_versions.md](paper/NOTES_versions.md).
 
-**Faltan valores objetivo para Antigua y Granada.** `data/targets/table2_mallucci2022_jie.csv`
-solo tiene las columnas de República Dominicana y Jamaica, transcritas de la
-Primera Entrega. Hasta que se transcriban las otras dos del PDF publicado, la
-tabla las muestra como `--` y la etapa 7 lo reporta como aviso.
+**El artículo publicado está en `paper/` pero fuera del control de versiones**
+(`*_NO_VERSIONAR.pdf`): es de acceso restringido. De ahí salieron los valores
+objetivo, ya verificados para los siete países y los tres paneles. También
+salieron de ahí dos discrepancias entre el artículo y su propio paquete de
+réplica, que están documentadas en
+[paper/NOTES_versions.md](paper/NOTES_versions.md).
 
 **Costo computacional.** La grilla del paper es 1260 estados exógenos × 150 de
 deuda; el VFI trabaja con arreglos de 28 millones de elementos. Presupueste
@@ -158,8 +160,10 @@ escrito el código pide ~15 GB solo para guardar la distribución simulada: use
 - [x] Motor Python ≡ MATLAB: frecuencias y pérdida de PIB exactamente iguales,
       deuda/PIB a ~1e-11, spreads hasta 1.2e-5 de diferencia relativa
       (0.007 pb sobre 557). Evidencia en `outputs/tables/comparison_*.md`
-- [ ] Transcribir los objetivos de ATG y GRD desde el PDF publicado
-- [ ] Cotejar los objetivos de DOM y JAM (`verified=FALSE`)
+- [x] Objetivos de la Tabla 2 verificados contra el PDF publicado: siete países,
+      tres paneles, siete momentos por panel
+- [ ] Contrastar la calibración de República Dominicana (el artículo y el código
+      no coinciden, y es el único país con brecha grande en la prueba)
 - [ ] Cronometrar un país y un panel con `paper_memlite` antes de lanzar todo
 - [ ] Corrida `paper_memlite` para los cuatro países, revisando el último
       `diff_q` de cada log

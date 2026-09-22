@@ -192,36 +192,44 @@ de MATLAB y al `.npz` del port, porque los dos motores usan los mismos nombres:
 | Fila de la Tabla 2 | Variable | Definición en el código |
 |---|---|---|
 | Spread promedio (pb) | `meanspread_sim` | media de `10000*((1+r_g)/(1+r^f)-1)` sobre períodos con acceso al mercado |
-| Deuda externa/PIB | `meanBY_sim` | media de `b/((delta+r^f)·y·h)`: valor facial de la deuda de largo plazo sobre PIB |
+| Spread mediano (pb) | `medianspread_sim` | mediana de lo mismo |
+| Deuda externa/PIB | `meanBY_sim` | media de `b/((ψ+r^f)·y·h)`: valor facial de la deuda de largo plazo sobre PIB |
+| Deuda/PIB a valor de mercado | `meanBY_sim_market` | media de `q·b`: la capacidad de endeudamiento efectiva |
 | Frecuencia de huracán | `hur_freq_sim` | proporción de períodos con `h < 1` |
 | Pérdida de PIB (huracán) | `gdp_g_h_sim` | crecimiento medio del PIB en años de huracán (negativo) |
 | Frecuencia de default | `def_freq_sim` | media de la probabilidad de default de la política óptima |
 
-Dos advertencias que costaron lectura de código:
+Tres advertencias que costaron lectura de código:
 
-- `meanBY_sim` descuenta con la tasa libre de riesgo; `meanBY_sim_market`
-  (también se extrae) usa el precio de mercado `q·b`. El paper reporta
-  deuda/PIB sin aclarar cuál; la etapa 5 muestra la primera y guarda la segunda
-  para poder discutirlo si la brecha resulta grande.
+- El paper reporta **las dos** medidas de deuda, facial y de mercado, así que
+  `meanBY_sim` y `meanBY_sim_market` tienen cada una su contraparte y se
+  comparan por separado. (Antes de tener el PDF publicado no estaba claro cuál
+  de las dos reportaba.)
+- El script sin huracanes del autor **nunca asigna** `medianspread_sim`, aunque
+  el paper reporta esa fila en el Panel C. La celda queda vacía con el motor
+  `matlab`; el port sí la calcula. Queda registrado en `config/specs.json` como
+  `no_calculado`, y ni los chequeos ni las comparaciones fallan por eso.
 - `def_freq_sim` **no** es un conteo de defaults: el modelo usa choques
   extremos-valor (`ev_rho = 1e-2`) y la política de default es una probabilidad,
   no un indicador. Por eso el paper la llama *default incidence*.
 
 ## 5. Límites conocidos
 
-1. **Los valores objetivo del paper están sin cotejar.** `data/targets/table2_mallucci2022_jie.csv`
-   tiene `verified=FALSE`: son la transcripción de la Primera Entrega. Cotejarlos
-   contra el PDF publicado (acceso Uniandes) es el primer pendiente; el working
-   paper de acceso abierto **no** sirve para eso (§6).
+1. **La calibración de República Dominicana no coincide entre el artículo y el
+   código.** La Tabla 1 publicada reporta `β = 0.88` y costo de default `0.895`;
+   el código usa `0.895` y `0.8175`. RD es además el único de los cuatro países
+   cuyo spread queda lejos del publicado en la corrida de prueba. Es la primera
+   cosa que hay que contrastar. Detalle en
+   [../paper/NOTES_versions.md](../paper/NOTES_versions.md).
 2. **No hay igualdad exacta posible** sin la semilla del autor (§2.5).
 3. **`maxiter_q = 600` no garantiza convergencia.** El código itera hasta
    `tol_q = 1e-6` o 600 iteraciones, cualquiera ocurra primero, y no avisa si
    salió por iteraciones. El log de MATLAB (`outputs/logs/matlab_*.log`) imprime
    `diff_q` en cada iteración: **revisar el último valor** antes de reportar.
-4. **Faltan objetivos para Antigua y Granada.** `data/targets/table2_mallucci2022_jie.csv`
-   solo tiene DOM y JAM. Mientras no se transcriban las otras dos columnas del
-   PDF publicado, esos países se simulan pero no se pueden comparar: la tabla
-   los muestra como `--` y la etapa 7 lo reporta como aviso.
+4. **El artículo dice 9.500 períodos simulados y el código tiene 10.000**, y su
+   Apéndice E dice `ρ_EV = 10⁻³` mientras el código usa `1e-2`. Ninguna de las
+   dos se puede reconciliar sin elegir: el pipeline usa lo que hace el código,
+   que es lo que presumiblemente generó la tabla.
 5. **El port a Python está escrito pero sin correr.** Las verificaciones
    estáticas (`python tests/test_static.py`) pasan: configuración coherente,
    parches que calzan contra el código del autor en los seis perfiles y

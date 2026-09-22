@@ -103,10 +103,45 @@ mismo camino.
 4. El chequeo "Panel C sin huracanes" era demasiado estricto: ahora admite el
    artefacto del estado inicial (`≤ 2.5/T_sim`) y falla por encima de eso.
 
+## 2026-09-22 — Tabla 2 verificada contra el artículo publicado
+
+Con el PDF publicado a mano (en `paper/`, fuera del control de versiones por
+licencia) se reemplazaron los objetivos por la Tabla 2 completa: **siete países,
+tres paneles, `verified=TRUE`**, 125 celdas.
+
+**La transcripción de la Primera Entrega tenía errores.** Spread de DOM 497 (real
+479), de JAM 526 (real 554), deuda/PIB de JAM 0.53 —que es el valor de
+**Granada**— y frecuencia de default de DOM 0.040 (real 0.083). Hay que
+corregirlo en el documento de la entrega.
+
+**Dos filas nuevas que el pipeline ya calculaba:** *median spread* y *market
+value of debt*. Con eso el Panel B pasa de 5 a 7 momentos comparables, y se
+resuelve la duda de qué medida de deuda reportaba el paper: reporta las dos.
+Detalle: el script sin huracanes del autor nunca asigna `medianspread_sim`,
+así que esa celda del Panel C queda vacía con el motor `matlab` (el port sí la
+calcula). Quedó registrado en `config/specs.json` como `no_calculado`, y los
+chequeos y comparaciones ya no fallan por eso.
+
+**Dos discrepancias entre el artículo y su paquete de réplica** (ver
+[../paper/NOTES_versions.md](../paper/NOTES_versions.md)):
+
+1. Calibración de República Dominicana: el artículo reporta `β = 0.88` y costo
+   de default `0.895`; el código usa `0.895` y `0.8175`. El `0.895` aparece en
+   las dos filas del artículo.
+2. El Apéndice E dice `ρ_EV = 10⁻³`; el código usa `1e-2`. También: el artículo
+   dice 9.500 períodos simulados y el código tiene 10.000.
+
+**Primera señal con los objetivos correctos** (perfil `smoke`, que no converge,
+así que es indicativo y nada más): ATG, GRD y JAM caen cerca del publicado
+—Jamaica: spread 556 contra 554, deuda/PIB 0.45 contra 0.49—, mientras
+**República Dominicana se va +179 pb en el Panel B y +194 en el C**. RD es
+justamente el país con la calibración en disputa. Es contrastable con una sola
+corrida.
+
 ### Pendientes inmediatos
 
-- [ ] Transcribir los objetivos de ATG y GRD de la Tabla 2 publicada.
-- [ ] Cotejar los de DOM y JAM y pasar `verified` a `TRUE`.
+- [ ] Contrastar RD con los parámetros de la Tabla 1 publicada (`β = 0.88`,
+      costo `0.895`) y ver si el spread se acerca a 479.
 - [ ] Cronometrar un país y un panel con `paper_memlite` antes de lanzar todo.
 - [ ] Corrida `paper_memlite` para los cuatro países; anotar duración y el
       último `diff_q` de cada log.

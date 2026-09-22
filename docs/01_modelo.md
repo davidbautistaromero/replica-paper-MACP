@@ -63,6 +63,10 @@ código añade **choques de valor extremo** (`ev_rho = 1e-2`) sobre la elección
   defaults";
 - la simulación propaga una distribución de deuda, no un sendero único.
 
+Una discrepancia que vale registrar: el Apéndice E del artículo dice que la
+escala de esos choques es `ρ_EV = 10⁻³`, pero el código usa `ev_rho = 1e-2`. El
+pipeline replica el código.
+
 En el port, tres expresiones usan su versión numéricamente estable
 (`softmax`, `scipy.special.expit`, `np.logaddexp`). Son la misma fórmula: el
 código del autor hace lo propio a mano, normalizando por el máximo y eligiendo
@@ -87,15 +91,21 @@ cuál. El port expone `Solution.converged`; en MATLAB hay que mirar el último
 | Fila de la Tabla 2 | Variable | Definición |
 |---|---|---|
 | Spread promedio (pb) | `meanspread_sim` | media de `10000·((1+r_g)/(1+r^f)−1)` en períodos con acceso |
-| Deuda externa/PIB | `meanBY_sim` | media de `b/((delta+r^f)·y·h)`: valor facial sobre PIB |
+| Spread mediano (pb) | `medianspread_sim` | mediana de lo mismo. **El script sin huracanes del autor no la calcula**, aunque el paper la reporta en el Panel C |
+| Deuda externa/PIB | `meanBY_sim` | media de `b/((ψ+r^f)·y·h)`: valor facial sobre PIB |
+| Deuda/PIB a valor de mercado | `meanBY_sim_market` | media de `q·b` |
 | Frecuencia de huracán | `hur_freq_sim` | proporción de períodos con `h < 1` |
 | Pérdida de PIB (huracán) | `gdp_g_h_sim` | crecimiento medio del PIB en años de huracán (negativo) |
 | Frecuencia de default | `def_freq_sim` | media de la probabilidad de default de la política |
 
-`meanBY_sim` descuenta con la tasa libre de riesgo; `meanBY_sim_market`
-(también se extrae) usa el valor de mercado `q·b`. El paper no aclara cuál
-reporta; la etapa 5 muestra el primero y guarda el segundo para discutirlo si la
-brecha resulta grande.
+El paper reporta la pérdida de PIB como número positivo (0.047 = caída de 4.7%);
+`data/targets/` la guarda negativa, que es la convención del código.
+
+`meanBY_sim` descuenta con la tasa libre de riesgo (valor facial);
+`meanBY_sim_market` usa el valor de mercado `q·b`. El paper reporta **las dos**
+filas, así que cada una tiene su contraparte y se comparan por separado. El
+valor de mercado es siempre menor, porque descuenta los cupones futuros a la
+tasa riesgosa.
 
 ### Rarezas que el port reproduce a propósito
 
