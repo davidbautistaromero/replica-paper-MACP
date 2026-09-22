@@ -88,20 +88,26 @@
   },
 
   "moments": {
-    "_doc": "Mapa variable MATLAB -> momento de la Tabla 2. 'col' indica la columna cuando la variable es matriz (counter x share_counter).",
+    "_doc": [
+      "Mapa variable -> fila de la Tabla 2 publicada, comun a los dos motores. 'col' indica la columna cuando la variable es matriz (counter x share_counter).",
+      "'no_calculado' registra paneles que un motor no produce: el script sin huracanes del autor nunca asigna medianspread_sim, asi que esa celda del Panel C queda vacia con el motor matlab (el port si la calcula). No es un error y las comparaciones no fallan por eso."
+    ],
     "spread_mean_bp":      {"var": "meanspread_sim",     "label": "Spread promedio (pb)",        "in_panels": ["B", "C"], "digits": 0},
+    "spread_median_bp":    {"var": "medianspread_sim",   "label": "Spread mediano (pb)",         "in_panels": ["B", "C"], "digits": 0,
+                            "no_calculado": {"matlab": ["C"]}},
     "debt_gdp":            {"var": "meanBY_sim",         "label": "Deuda externa/PIB",           "in_panels": ["B", "C"], "digits": 2},
+    "debt_gdp_market":     {"var": "meanBY_sim_market",  "label": "Deuda/PIB (valor de mercado)","in_panels": ["B", "C"], "digits": 2},
     "hurricane_freq":      {"var": "hur_freq_sim",       "label": "Frecuencia de huracan",       "in_panels": ["B"],      "digits": 3},
     "gdp_loss_hurricane":  {"var": "gdp_g_h_sim",        "label": "Perdida de PIB (huracan)",    "in_panels": ["B"],      "digits": 3},
-    "default_freq":        {"var": "def_freq_sim",       "label": "Frecuencia de default",       "in_panels": ["B", "C"], "digits": 3, "col": 0},
-    "debt_gdp_market":     {"var": "meanBY_sim_market",  "label": "Deuda/PIB (valor de mercado)","in_panels": [],         "digits": 2},
-    "spread_median_bp":    {"var": "medianspread_sim",   "label": "Spread mediano (pb)",         "in_panels": [],         "digits": 0}
+    "default_freq":        {"var": "def_freq_sim",       "label": "Frecuencia de default",       "in_panels": ["B", "C"], "digits": 3, "col": 0}
   },
 
   "tolerances": {
-    "_doc": "Bandas usadas por checks.py para decidir si un momento se considera replicado. Absolutas, en unidades del momento.",
+    "_doc": "Bandas usadas por checks.py para decidir si un momento se considera replicado. Absolutas, en unidades del momento. El spread mediano lleva una banda mas amplia que el promedio porque en el paper varia entre 25 y 290 pb segun el pais.",
     "spread_mean_bp": 60,
+    "spread_median_bp": 60,
     "debt_gdp": 0.05,
+    "debt_gdp_market": 0.05,
     "hurricane_freq": 0.01,
     "gdp_loss_hurricane": 0.01,
     "default_freq": 0.01

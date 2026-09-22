@@ -133,6 +133,25 @@ def tag(profile: str, engine: str) -> str:
     return f"{profile}_{engine}"
 
 
+def moments_only(cfg: dict) -> dict[str, dict]:
+    return {k: v for k, v in cfg["moments"].items() if isinstance(v, dict)}
+
+
+def expected_missing(cfg: dict, engine: str | None = None) -> set[tuple[str, str]]:
+    """Celdas (momento, panel) que un motor no calcula, y no por error.
+
+    El script sin huracanes del autor, por ejemplo, nunca asigna
+    medianspread_sim: el paper reporta ese numero pero su codigo no lo produce.
+    Con engine=None devuelve las celdas que le faltan a cualquiera de los dos.
+    """
+    faltan = set()
+    for mom, meta in moments_only(cfg).items():
+        for motor, paneles in meta.get("no_calculado", {}).items():
+            if engine is None or motor == engine:
+                faltan.update((mom, p) for p in paneles)
+    return faltan
+
+
 def ensure_dirs(*paths: Path) -> None:
     for p in paths:
         p.mkdir(parents=True, exist_ok=True)

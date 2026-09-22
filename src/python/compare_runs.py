@@ -28,7 +28,9 @@ import sys
 import numpy as np
 import pandas as pd
 
-from common import OUT_MOMENTS, OUT_TABLES, ensure_dirs, load_config, log
+from common import (
+    OUT_MOMENTS, OUT_TABLES, ensure_dirs, expected_missing, load_config, log,
+)
 
 CLAVES = ["spec", "panel", "iso3", "moment"]
 
@@ -133,7 +135,11 @@ def main() -> int:
     # ejemplo, nunca asigna medianspread_sim), y esa asimetria no es un error.
     en_tabla = {m: set(meta["in_panels"]) for m, meta in cfg["moments"].items()
                 if isinstance(meta, dict)}
-    es_tabla = np.array([r.panel in en_tabla.get(r.moment, set()) for r in df.itertuples()])
+    # Celdas que alguno de los dos motores no calcula por diseno del codigo del autor
+    excusadas = expected_missing(cfg)
+    es_tabla = np.array([r.panel in en_tabla.get(r.moment, set())
+                         and (r.moment, r.panel) not in excusadas
+                         for r in df.itertuples()])
     divergen = (df["veredicto"] == "DIVERGENTE").to_numpy()
     ausentes = (df["veredicto"] == "FALTA").to_numpy()
     malos = int((divergen | (ausentes & es_tabla)).sum())

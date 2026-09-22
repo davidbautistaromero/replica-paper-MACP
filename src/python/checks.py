@@ -22,7 +22,10 @@ import sys
 import numpy as np
 import pandas as pd
 
-from common import OUT_TABLES, TARGETS_DIR, ensure_dirs, load_config, log, tag
+from common import (
+    OUT_TABLES, TARGETS_DIR, ensure_dirs, expected_missing, load_config, log,
+    moments_only, tag,
+)
 
 OK, WARN, FAIL = "OK", "AVISO", "FALLA"
 
@@ -31,14 +34,25 @@ def add(res: list, tipo: str, estado: str, nombre: str, detalle: str) -> None:
     res.append({"tipo": tipo, "estado": estado, "chequeo": nombre, "detalle": detalle})
 
 
-def structural(df: pd.DataFrame, cfg: dict, res: list, t_sim: int) -> None:
+def structural(df: pd.DataFrame, tgt: pd.DataFrame, cfg: dict, res: list,
+               t_sim: int, engine: str) -> None:
     calib = pd.read_csv(TARGETS_DIR / "table1_calibration_vendor_code.csv", comment="#")
 
-    # 1. Cobertura: cada objetivo tiene su contraparte simulada.
-    faltantes = df[df["value"].isna()]
-    add(res, "estructural", OK if faltantes.empty else FAIL, "cobertura de momentos",
-        "todos los objetivos tienen contraparte simulada" if faltantes.empty
-        else f"sin simular: {faltantes[['panel', 'iso3', 'moment']].to_dict('records')}")
+    # 1. Cobertura: cada celda de la Tabla 2 que el paper reporta para los paises
+    #    simulados tiene su contraparte. Se descuentan las celdas que el motor no
+    #    calcula por diseno del codigo del autor (ver 'no_calculado' en config).
+    esperadas = {(m, p) for m, meta in moments_only(cfg).items() for p in meta["in_panels"]}
+    excusadas = expected_missing(cfg, engine)
+    simuladas = {(r.moment, r.panel, r.iso3) for r in df.itertuples()}
+    objetivos = {(r.moment, r.panel, r.iso3) for r in tgt.itertuples()
+                 if (r.moment, r.panel) in esperadas and r.iso3 in set(df["iso3"])}
+    faltan = sorted(o for o in objetivos - simuladas if (o[0], o[1]) not in excusadas)
+    omitidas = sorted(o for o in objetivos - simuladas if (o[0], o[1]) in excusadas)
+    add(res, "estructural", OK if not faltan else FAIL, "cobertura de la Tabla 2",
+        (f"{len(objetivos)} celdas reportadas por el paper, todas simuladas"
+         + (f"; {len(omitidas)} omitidas por diseno del codigo del autor: "
+            f"{sorted({(m, p) for m, p, _ in omitidas})}" if omitidas else ""))
+        if not faltan else f"sin simular: {faltan}")
 
     # 2. La frecuencia simulada de huracanes debe acercarse a la p_h calibrada.
     hf = df[(df["moment"] == "hurricane_freq") & (df["panel"] == "B")]
@@ -124,9 +138,10 @@ def main() -> int:
     if not src.exists():
         raise SystemExit(f"Falta {src}. Corra la etapa 5 (build_table2.py).")
     df = pd.read_csv(src)
+    tgt = pd.read_csv(TARGETS_DIR / "table2_mallucci2022_jie.csv", comment="#")
 
     res: list[dict] = []
-    structural(df, cfg, res, int(cfg["profiles"][args.profile]["T_sim"]))
+    structural(df, tgt, cfg, res, int(cfg["profiles"][args.profile]["T_sim"]), args.engine)
     targets_available(df, cfg, res)
     tolerances(df, cfg, res)
     signs(df, res)
