@@ -5,7 +5,20 @@ build/*
 outputs/raw_mat/*
 outputs/raw_npz/*
 outputs/logs/*
+
+# Salidas de perfiles de prueba: regenerables y no reportables, no se versionan.
+outputs/moments/*
+outputs/tables/*
+outputs/figures/*
+
+# Excepciones. Los reportes de equivalencia son la evidencia que citan los
+# documentos, y las salidas del perfil del articulo son el entregable.
 !**/.gitkeep
+!outputs/tables/comparison_*
+!outputs/moments/moments_paper*
+!outputs/tables/table2_comparison_paper*
+!outputs/tables/checks_paper*
+!outputs/figures/table2_comparison_paper*
 
 # MATLAB
 *.asv

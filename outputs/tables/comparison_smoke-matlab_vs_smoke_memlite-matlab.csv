@@ -1,0 +1,49 @@
+spec,panel,iso3,moment,value_izq,value_der,moment_label,dif_abs,dif_rel,veredicto
+panelB_hurricane,B,ATG,debt_gdp,0.3853595735257192,0.3853595735257192,Deuda externa/PIB,0.0,0.0,identico
+panelB_hurricane,B,ATG,debt_gdp_market,0.3229417582613524,0.3229417582613524,Deuda/PIB (valor de mercado),0.0,0.0,identico
+panelB_hurricane,B,ATG,default_freq,0.0648084596076968,0.0648084596076968,Frecuencia de default,0.0,0.0,identico
+panelB_hurricane,B,ATG,gdp_loss_hurricane,-0.052506794313389,-0.052506794313389,Perdida de PIB (huracan),0.0,0.0,identico
+panelB_hurricane,B,ATG,hurricane_freq,0.096,0.096,Frecuencia de huracan,0.0,0.0,identico
+panelB_hurricane,B,ATG,spread_mean_bp,379.54080013687377,379.54080013687377,Spread promedio (pb),0.0,0.0,identico
+panelB_hurricane,B,ATG,spread_median_bp,194.91533127265703,194.91533127265703,Spread mediano (pb),0.0,0.0,identico
+panelB_hurricane,B,DOM,debt_gdp,0.2261958856929268,0.2261958856929268,Deuda externa/PIB,0.0,0.0,identico
+panelB_hurricane,B,DOM,debt_gdp_market,0.1980469293007771,0.1980469293007771,Deuda/PIB (valor de mercado),0.0,0.0,identico
+panelB_hurricane,B,DOM,default_freq,0.0930263320381,0.0930263320381,Frecuencia de default,0.0,0.0,identico
+panelB_hurricane,B,DOM,gdp_loss_hurricane,-0.0432564342023567,-0.0432564342023567,Perdida de PIB (huracan),0.0,0.0,identico
+panelB_hurricane,B,DOM,hurricane_freq,0.0445,0.0445,Frecuencia de huracan,0.0,0.0,identico
+panelB_hurricane,B,DOM,spread_mean_bp,657.7523715492088,657.7523715492088,Spread promedio (pb),0.0,0.0,identico
+panelB_hurricane,B,DOM,spread_median_bp,331.2886891303634,331.2886891303634,Spread mediano (pb),0.0,0.0,identico
+panelB_hurricane,B,GRD,debt_gdp,0.5150484139324104,0.5150484139324104,Deuda externa/PIB,0.0,0.0,identico
+panelB_hurricane,B,GRD,debt_gdp_market,0.3968485297745346,0.3968485297745346,Deuda/PIB (valor de mercado),0.0,0.0,identico
+panelB_hurricane,B,GRD,default_freq,0.0678671211516415,0.0678671211516415,Frecuencia de default,0.0,0.0,identico
+panelB_hurricane,B,GRD,gdp_loss_hurricane,-0.0688340910259262,-0.0688340910259262,Perdida de PIB (huracan),0.0,0.0,identico
+panelB_hurricane,B,GRD,hurricane_freq,0.049,0.049,Frecuencia de huracan,0.0,0.0,identico
+panelB_hurricane,B,GRD,spread_mean_bp,509.7806067743612,509.7806067743612,Spread promedio (pb),0.0,0.0,identico
+panelB_hurricane,B,GRD,spread_median_bp,225.89335523802933,225.89335523802933,Spread mediano (pb),0.0,0.0,identico
+panelB_hurricane,B,JAM,debt_gdp,0.4483073503831632,0.4483073503831632,Deuda externa/PIB,0.0,0.0,identico
+panelB_hurricane,B,JAM,debt_gdp_market,0.4007394252606399,0.4007394252606399,Deuda/PIB (valor de mercado),0.0,0.0,identico
+panelB_hurricane,B,JAM,default_freq,0.052312201326014,0.052312201326014,Frecuencia de default,0.0,0.0,identico
+panelB_hurricane,B,JAM,gdp_loss_hurricane,-0.0228688957810925,-0.0228688957810925,Perdida de PIB (huracan),0.0,0.0,identico
+panelB_hurricane,B,JAM,hurricane_freq,0.104,0.104,Frecuencia de huracan,0.0,0.0,identico
+panelB_hurricane,B,JAM,spread_mean_bp,555.9180752515706,555.9180752515706,Spread promedio (pb),0.0,0.0,identico
+panelB_hurricane,B,JAM,spread_median_bp,101.95395185603527,101.95395185603527,Spread mediano (pb),0.0,0.0,identico
+panelC_no_hurricane,C,ATG,debt_gdp,0.5224340334741024,0.5224340334741024,Deuda externa/PIB,0.0,0.0,identico
+panelC_no_hurricane,C,ATG,debt_gdp_market,0.4774257161315157,0.4774257161315157,Deuda/PIB (valor de mercado),0.0,0.0,identico
+panelC_no_hurricane,C,ATG,default_freq,0.0535207689129015,0.0535207689129015,Frecuencia de default,0.0,0.0,identico
+panelC_no_hurricane,C,ATG,hurricane_freq,0.001,0.001,Frecuencia de huracan,0.0,0.0,identico
+panelC_no_hurricane,C,ATG,spread_mean_bp,300.04649763922964,300.04649763922964,Spread promedio (pb),0.0,0.0,identico
+panelC_no_hurricane,C,DOM,debt_gdp,0.2567195220009257,0.2567195220009257,Deuda externa/PIB,0.0,0.0,identico
+panelC_no_hurricane,C,DOM,debt_gdp_market,0.2335968731446068,0.2335968731446068,Deuda/PIB (valor de mercado),0.0,0.0,identico
+panelC_no_hurricane,C,DOM,default_freq,0.0849777277742021,0.0849777277742021,Frecuencia de default,0.0,0.0,identico
+panelC_no_hurricane,C,DOM,hurricane_freq,0.001,0.001,Frecuencia de huracan,0.0,0.0,identico
+panelC_no_hurricane,C,DOM,spread_mean_bp,609.8655984706912,609.8655984706912,Spread promedio (pb),0.0,0.0,identico
+panelC_no_hurricane,C,GRD,debt_gdp,0.5890184071866935,0.5890184071866935,Deuda externa/PIB,0.0,0.0,identico
+panelC_no_hurricane,C,GRD,debt_gdp_market,0.4853753533602883,0.4853753533602883,Deuda/PIB (valor de mercado),0.0,0.0,identico
+panelC_no_hurricane,C,GRD,default_freq,0.0632541282266889,0.0632541282266889,Frecuencia de default,0.0,0.0,identico
+panelC_no_hurricane,C,GRD,hurricane_freq,0.001,0.001,Frecuencia de huracan,0.0,0.0,identico
+panelC_no_hurricane,C,GRD,spread_mean_bp,400.5290653526926,400.5290653526926,Spread promedio (pb),0.0,0.0,identico
+panelC_no_hurricane,C,JAM,debt_gdp,0.5708043340824157,0.5708043340824157,Deuda externa/PIB,0.0,0.0,identico
+panelC_no_hurricane,C,JAM,debt_gdp_market,0.5419675516478711,0.5419675516478711,Deuda/PIB (valor de mercado),0.0,0.0,identico
+panelC_no_hurricane,C,JAM,default_freq,0.0484299073849971,0.0484299073849971,Frecuencia de default,0.0,0.0,identico
+panelC_no_hurricane,C,JAM,hurricane_freq,0.001,0.001,Frecuencia de huracan,0.0,0.0,identico
+panelC_no_hurricane,C,JAM,spread_mean_bp,369.9396437927216,369.9396437927216,Spread promedio (pb),0.0,0.0,identico
