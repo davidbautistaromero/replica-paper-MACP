@@ -1,0 +1,14 @@
+# Mallucci (2022), Tabla 1, Panel B: calibracion tal como la reporta el ARTICULO.
+# Comparar con table1_calibration_vendor_code.csv, que es la del CODIGO.
+# Coinciden en todo salvo Republica Dominicana: el articulo reporta beta=0.88 y
+# costo de default 0.895, el codigo usa 0.895 y 0.8175. El 0.895 aparece en las
+# dos filas del articulo, asi que parece que beta se copio sobre la fila de delta.
+# Comunes (Panel A): gamma=2, lambda=0.33, r_rf=0.0451.
+iso3,psi_duration,p_hu,rho_y,sigma_y,mu_h,sigma_h,beta,output_cost
+ATG,0.0824,0.103,0.92,0.046,0.049,0.029,0.915,0.75
+BLZ,0.0442,0.077,0.99,0.036,0.021,0.028,0.945,0.54
+DMA,0.0467,0.026,0.94,0.027,0.098,0.028,0.9375,0.68
+DOM,0.1731,0.051,0.88,0.046,0.04,0.034,0.88,0.895
+GRD,0.0612,0.051,0.91,0.052,0.07,0.052,0.91,0.697
+HND,0.1639,0.051,0.83,0.026,0.052,0.027,0.8575,0.82
+JAM,0.0564,0.103,0.96,0.026,0.023,0.02,0.93,0.73
