@@ -8,44 +8,51 @@
   "profiles": {
     "_doc": [
       "memlite=true simula con dos rebanadas de la distribucion en vez de guardar las T_sim+1 (identico algebraicamente; imprescindible con las grillas del paper, que si no piden 15 GB de RAM).",
-      "shared_shocks=true hace que ambos motores (MATLAB y Python) lean los mismos sorteos aleatorios de build/shocks/<perfil>/. Es lo que permite comparar motores sin que la diferencia sea ruido de Monte Carlo: con sorteos distintos, dos implementaciones correctas igual dan numeros distintos."
+      "shared_shocks=true hace que ambos motores (MATLAB y Python) lean los mismos sorteos aleatorios de build/shocks/<perfil>/. Es lo que permite comparar motores sin que la diferencia sea ruido de Monte Carlo: con sorteos distintos, dos implementaciones correctas igual dan numeros distintos.",
+      "calibration elige de donde salen beta y el costo de default: 'vendor' (lo que hace el codigo del autor, que es la replica) o 'published' (lo que reporta la Tabla 1 del articulo). Solo difieren en Republica Dominicana. Un perfil con 'published' es un CONTRAFACTUAL, no la replica."
     ],
 
     "paper": {
       "_doc": "Grillas y tolerancias exactas del paquete de replica, codigo del autor sin optimizar. Requiere ~16 GB libres solo para la simulacion.",
       "N_y": 63, "N_h": 20, "N_b_g": 150, "T_sim": 10000,
       "maxiter_q": 600, "tol_q": 1e-06,
-      "memlite": false, "shared_shocks": false, "reportable": true
+      "calibration": "vendor", "memlite": false, "shared_shocks": false, "reportable": true
     },
     "paper_memlite": {
       "_doc": "Perfil recomendado para la entrega: mismas grillas y tolerancias que 'paper', con la simulacion reescrita para no guardar la distribucion completa.",
       "N_y": 63, "N_h": 20, "N_b_g": 150, "T_sim": 10000,
       "maxiter_q": 600, "tol_q": 1e-06,
-      "memlite": true, "shared_shocks": false, "reportable": true
+      "calibration": "vendor", "memlite": true, "shared_shocks": false, "reportable": true
     },
     "paper_cmp": {
       "_doc": "Como paper_memlite pero con sorteos compartidos: es el perfil para contrastar MATLAB vs Python con las grillas del articulo.",
       "N_y": 63, "N_h": 20, "N_b_g": 150, "T_sim": 10000,
       "maxiter_q": 600, "tol_q": 1e-06,
-      "memlite": true, "shared_shocks": true, "reportable": true
+      "calibration": "vendor", "memlite": true, "shared_shocks": true, "reportable": true
     },
     "smoke": {
       "_doc": "Prueba rapida del pipeline con grillas gruesas. Sus numeros NO son resultados.",
       "N_y": 21, "N_h": 6, "N_b_g": 60, "T_sim": 2000,
       "maxiter_q": 25, "tol_q": 0.0001,
-      "memlite": false, "shared_shocks": false, "reportable": false
+      "calibration": "vendor", "memlite": false, "shared_shocks": false, "reportable": false
     },
     "smoke_memlite": {
       "_doc": "Igual que 'smoke' pero con memlite. Su unico proposito es verificar que memlite reproduce 'smoke' momento a momento.",
       "N_y": 21, "N_h": 6, "N_b_g": 60, "T_sim": 2000,
       "maxiter_q": 25, "tol_q": 0.0001,
-      "memlite": true, "shared_shocks": false, "reportable": false
+      "calibration": "vendor", "memlite": true, "shared_shocks": false, "reportable": false
+    },
+    "smoke_pubcal": {
+      "_doc": "CONTRAFACTUAL, no es la replica: identico a smoke_cmp salvo que beta y el costo de default de Republica Dominicana son los de la Tabla 1 publicada. Sirve para contrastar la discrepancia entre el articulo y su codigo.",
+      "N_y": 21, "N_h": 6, "N_b_g": 60, "T_sim": 2000,
+      "maxiter_q": 25, "tol_q": 0.0001,
+      "calibration": "published", "memlite": true, "shared_shocks": true, "reportable": false
     },
     "smoke_cmp": {
       "_doc": "Grillas gruesas + sorteos compartidos: prueba barata de que el motor Python reproduce al de MATLAB antes de gastar horas con las grillas del articulo.",
       "N_y": 21, "N_h": 6, "N_b_g": 60, "T_sim": 2000,
       "maxiter_q": 25, "tol_q": 0.0001,
-      "memlite": true, "shared_shocks": true, "reportable": false
+      "calibration": "vendor", "memlite": true, "shared_shocks": true, "reportable": false
     }
   },
 

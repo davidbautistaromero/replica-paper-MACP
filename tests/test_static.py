@@ -24,9 +24,10 @@ import common  # noqa: E402
 import patch_vendor as pv  # noqa: E402
 from model.calibration import build_params  # noqa: E402
 
-PERFILES = ["paper", "paper_memlite", "paper_cmp", "smoke", "smoke_memlite", "smoke_cmp"]
+PERFILES = ["paper", "paper_memlite", "paper_cmp", "smoke", "smoke_memlite",
+            "smoke_cmp", "smoke_pubcal"]
 CLAVES_PERFIL = {"N_y", "N_h", "N_b_g", "T_sim", "maxiter_q", "tol_q",
-                 "memlite", "shared_shocks", "reportable"}
+                 "calibration", "memlite", "shared_shocks", "reportable"}
 
 
 def _sin_comentarios(texto: str) -> str:
@@ -66,6 +67,7 @@ def test_parches_calzan_en_todos_los_perfiles():
                       *pv.EXTRA_RULES.get(spec_name, [])]
             if prof["shared_shocks"]:
                 reglas += pv._rules_shared_shocks(nombre, spec_name)
+            reglas += pv._rules_calibration(prof)
             if prof["memlite"]:
                 reglas += pv._rules_memlite()
 
@@ -87,6 +89,11 @@ def test_parches_calzan_en_todos_los_perfiles():
             if prof["shared_shocks"]:
                 assert f"'shocks','{nombre}','shocks.mat'" in codigo
                 assert "shocks_X(:,counter)" in codigo
+            # la calibracion publicada solo toca a Republica Dominicana
+            publicada = prof["calibration"] == "published"
+            assert ("beta     =  0.88;" in codigo) == publicada, (nombre, "beta DOM")
+            assert ("wc_par_asymm   = 0.895;" in codigo) == publicada, (nombre, "costo DOM")
+            assert "beta     =  .93;" in codigo, (nombre, "JAM no debe cambiar")
 
 
 def test_sendero_de_markov_duplica_el_estado_inicial():
@@ -111,6 +118,27 @@ def test_sendero_de_markov_duplica_el_estado_inicial():
     sendero = markov_path(P, 1, np.full(T - 1, 0.5))
     assert len(sendero) == T
     assert list(sendero) == [1, 1, 2, 3, 0, 1]
+
+
+def test_calibracion_publicada_solo_toca_republica_dominicana():
+    """El perfil contrafactual cambia beta y el costo de default, y solo de RD.
+
+    La discrepancia entre la Tabla 1 del articulo (beta=0.88, costo=0.895) y el
+    codigo del autor (0.895, 0.8175) es unicamente en Republica Dominicana. Si
+    apareciera otra, las reglas se generan comparando los dos CSV y este test
+    obliga a revisarla.
+    """
+    cfg = common.load_config()
+    spec = common.specs_only(cfg)["panelB_hurricane"]
+    vendor = common.resolve_profile(cfg, "smoke_cmp")
+    publicada = common.resolve_profile(cfg, "smoke_pubcal")
+
+    dom_v, dom_p = build_params(4, spec, vendor), build_params(4, spec, publicada)
+    assert (dom_v.beta, dom_v.wc_par_asymm) == (0.895, 0.8175)
+    assert (dom_p.beta, dom_p.wc_par_asymm) == (0.88, 0.895)
+    for counter in (1, 5, 7):
+        a, b = build_params(counter, spec, vendor), build_params(counter, spec, publicada)
+        assert (a.beta, a.wc_par_asymm) == (b.beta, b.wc_par_asymm), counter
 
 
 def test_calibracion_del_port():

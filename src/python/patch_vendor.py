@@ -40,7 +40,7 @@ import re
 import sys
 
 from common import (
-    ROOT, VENDOR_DIR, specs_only, build_dir, ensure_dirs, load_config, log, resolve_countries,
+    ROOT, TARGETS_DIR, VENDOR_DIR, specs_only, build_dir, ensure_dirs, load_config, log, resolve_countries,
     resolve_profile, sha256, write_manifest,
 )
 
@@ -139,6 +139,51 @@ def _rules_shared_shocks(profile: str, spec_name: str) -> list[dict]:
             "count": 1,
         })
     return rules
+
+
+def _rules_calibration(prof: dict) -> list[dict]:
+    """Sustituye beta y el costo de default por los de la Tabla 1 publicada.
+
+    Solo se usa en perfiles con calibration='published', que son
+    CONTRAFACTUALES: sirven para contrastar la discrepancia entre el articulo y
+    su propio codigo, no para la replica. Hoy la diferencia es unicamente en
+    Republica Dominicana (articulo: beta=0.88 y costo 0.895; codigo: 0.895 y
+    0.8175), pero las reglas se generan comparando los dos CSV, asi que si
+    apareciera otra diferencia se aplicaria sola.
+
+    Las lineas se localizan por el valor del codigo, y apply_rule exige una sola
+    coincidencia: si el valor dejara de ser unico en el archivo, la etapa falla
+    en vez de parchar el pais equivocado.
+    """
+    if prof.get("calibration", "vendor") != "published":
+        return []
+
+    import csv
+
+    def leer(nombre):
+        with open(TARGETS_DIR / nombre, encoding="utf-8") as fh:
+            return {r["iso3"]: r for r in csv.DictReader(
+                l for l in fh if not l.startswith("#"))}
+
+    codigo, articulo = leer("table1_calibration_vendor_code.csv"), leer(
+        "table1_mallucci2022_jie_published.csv")
+    pares = [("beta", "beta", "beta"),
+             ("output_cost_frac", "output_cost", "wc_par_asymm")]
+
+    reglas = []
+    for iso, fila in codigo.items():
+        for col_cod, col_art, var_matlab in pares:
+            viejo, nuevo_valor = float(fila[col_cod]), float(articulo[iso][col_art])
+            if abs(viejo - nuevo_valor) < 1e-12:
+                continue
+            decimales = f"{viejo:.10f}".rstrip("0").split(".")[1]
+            reglas.append({
+                "nombre": f"calibracion publicada: {iso} {var_matlab} {viejo} -> {nuevo_valor}",
+                "pattern": rf"(?m)^({var_matlab}\s*=\s*)0*\.{decimales};",
+                "repl": (lambda v: (lambda m: f"{m.group(1)}{v}; % PARCHE calibracion publicada"))(nuevo_valor),
+                "count": 1,
+            })
+    return reglas
 
 
 def _rules_memlite() -> list[dict]:
@@ -268,6 +313,7 @@ def main() -> int:
 
         rules = [_rule_countries(counters), _rule_seed(seed), *_rules_grid(prof),
                  _rule_last_save(spec["mat_file"]), *EXTRA_RULES.get(spec_name, [])]
+        rules += _rules_calibration(prof)
         if prof.get("shared_shocks", False):
             rules += _rules_shared_shocks(args.profile, spec_name)
         if prof.get("memlite", False):

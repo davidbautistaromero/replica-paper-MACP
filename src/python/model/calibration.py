@@ -14,6 +14,7 @@ from pathlib import Path
 
 TARGETS = Path(__file__).resolve().parents[3] / "data" / "targets"
 CALIB_CSV = TARGETS / "table1_calibration_vendor_code.csv"
+CALIB_CSV_PUBLICADA = TARGETS / "table1_mallucci2022_jie_published.csv"
 
 # Parametros comunes a los siete paises (climate_persistent_wf.m:83-110, 259-290)
 COMMON = {
@@ -83,16 +84,35 @@ class Params:
             raise AttributeError(name) from None
 
 
-def load_country_table() -> dict[int, dict[str, str]]:
-    with open(CALIB_CSV, encoding="utf-8") as fh:
-        rows = [r for r in csv.DictReader(
-            line for line in fh if not line.startswith("#"))]
-    return {int(r["counter"]): r for r in rows}
+def _leer(path: Path, clave: str) -> dict:
+    with open(path, encoding="utf-8") as fh:
+        rows = list(csv.DictReader(l for l in fh if not l.startswith("#")))
+    return {r[clave]: r for r in rows}
+
+
+def load_country_table(calibration: str = "vendor") -> dict[int, dict[str, str]]:
+    """Parametros por pais. Con calibration='published' se reemplazan beta y el
+    costo de default por los de la Tabla 1 del articulo.
+
+    Los demas parametros no se tocan: el articulo y el codigo coinciden en todos
+    (salvo redondeos en sigma_y), asi que sustituirlos solo metaria ruido en el
+    contraste. Un perfil con 'published' es un contrafactual, no la replica.
+    """
+    tabla = {int(r["counter"]): dict(r) for r in _leer(CALIB_CSV, "counter").values()}
+    if calibration == "vendor":
+        return tabla
+    if calibration != "published":
+        raise SystemExit(f"Calibracion desconocida: {calibration}")
+    pub = _leer(CALIB_CSV_PUBLICADA, "iso3")
+    for fila in tabla.values():
+        fila["beta"] = pub[fila["iso3"]]["beta"]
+        fila["output_cost_frac"] = pub[fila["iso3"]]["output_cost"]
+    return tabla
 
 
 def build_params(counter: int, spec: dict, profile: dict) -> Params:
     """Arma los parametros de un pais combinando CSV + especificacion + perfil."""
-    row = load_country_table()[counter]
+    row = load_country_table(profile.get("calibration", "vendor"))[counter]
     return Params(
         counter=counter,
         iso3=row["iso3"],
