@@ -19,6 +19,7 @@ from __future__ import annotations
 import argparse
 import sys
 
+import numpy as np
 import pandas as pd
 
 from common import OUT_TABLES, TARGETS_DIR, ensure_dirs, load_config, log, tag
@@ -30,7 +31,7 @@ def add(res: list, tipo: str, estado: str, nombre: str, detalle: str) -> None:
     res.append({"tipo": tipo, "estado": estado, "chequeo": nombre, "detalle": detalle})
 
 
-def structural(df: pd.DataFrame, cfg: dict, res: list) -> None:
+def structural(df: pd.DataFrame, cfg: dict, res: list, t_sim: int) -> None:
     calib = pd.read_csv(TARGETS_DIR / "table1_calibration_vendor_code.csv", comment="#")
 
     # 1. Cobertura: cada objetivo tiene su contraparte simulada.
@@ -48,11 +49,17 @@ def structural(df: pd.DataFrame, cfg: dict, res: list) -> None:
             f"frecuencia de huracan {r['iso3']}",
             f"simulada {r['value']:.3f} vs. calibrada p_h={p_hu:.3f} (dif {dif:.3f})")
 
-    # 3. El Panel C no debe registrar huracanes.
-    c_hur = df[(df["panel"] == "C") & (df["moment"] == "hurricane_freq") & (df["value"] > 0)]
-    add(res, "estructural", OK if c_hur.empty else FAIL, "Panel C sin huracanes",
-        "ningun huracan simulado en el Panel C" if c_hur.empty
-        else f"aparecen huracanes en: {sorted(c_hur['iso3'])}")
+    # 3. El Panel C no debe registrar huracanes, salvo el artefacto del estado
+    #    inicial: el codigo del autor arranca la simulacion con el indice de
+    #    huracan a mitad de la grilla y duplica el estado inicial en el sendero,
+    #    asi que incluso sin riesgo aparecen exactamente 2 periodos con dano.
+    tope = 2.5 / t_sim
+    c_hur = df[(df["panel"] == "C") & (df["moment"] == "hurricane_freq")]
+    exceso = c_hur[c_hur["value"] > tope]
+    add(res, "estructural", OK if exceso.empty else FAIL, "Panel C sin huracanes",
+        f"frecuencias <= {tope:.2}, compatible con el artefacto del estado inicial "
+        f"(2/{t_sim})" if exceso.empty
+        else f"por encima del artefacto: {exceso[['iso3', 'value']].to_dict('records')}")
 
     # 4. Frecuencias de default en rango plausible.
     dfq = df[df["moment"] == "default_freq"]
@@ -64,9 +71,10 @@ def structural(df: pd.DataFrame, cfg: dict, res: list) -> None:
 
 def targets_available(df: pd.DataFrame, cfg: dict, res: list) -> None:
     """Avisa (sin fallar) si faltan valores del paper para algun pais pedido."""
-    tabla = [m for m, meta in cfg["moments"].items()
-             if isinstance(meta, dict) and meta["in_panels"]]
-    falta = df[df["target"].isna() & df["moment"].isin(tabla)]
+    esperados = {m: set(meta["in_panels"]) for m, meta in cfg["moments"].items()
+                 if isinstance(meta, dict)}
+    falta = df[df["target"].isna() & np.array(
+        [r.panel in esperados.get(r.moment, set()) for r in df.itertuples()])]
     if falta.empty:
         add(res, "estructural", OK, "objetivos del paper disponibles",
             "todos los paises pedidos tienen valores transcritos")
@@ -118,7 +126,7 @@ def main() -> int:
     df = pd.read_csv(src)
 
     res: list[dict] = []
-    structural(df, cfg, res)
+    structural(df, cfg, res, int(cfg["profiles"][args.profile]["T_sim"]))
     targets_available(df, cfg, res)
     tolerances(df, cfg, res)
     signs(df, res)

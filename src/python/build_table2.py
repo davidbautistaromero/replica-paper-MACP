@@ -19,6 +19,7 @@ from __future__ import annotations
 import argparse
 import sys
 
+import numpy as np
 import pandas as pd
 
 from common import (
@@ -47,16 +48,29 @@ def build_long(profile: str, engine: str) -> pd.DataFrame:
     df["gap"] = df["value"] - df["target"]
     df["gap_pct"] = 100 * df["gap"] / df["target"].abs()
 
-    # Aviso explicito: momentos simulados sin contraparte en data/targets/.
-    sin_objetivo = df[df["target"].isna() & df["moment"].isin(
-        [m for m, meta in load_config()["moments"].items()
-         if isinstance(meta, dict) and meta["in_panels"]])]
-    if not sin_objetivo.empty:
-        paises = sorted(sin_objetivo["iso3"].unique())
-        log(f"AVISO: sin valor objetivo del paper para {paises}. "
-            f"Transcriba esas columnas de la Tabla 2 a data/targets/"
-            f"table2_mallucci2022_jie.csv para poder comparar.")
+    # Aviso explicito: momentos que el paper SI reporta en ese panel y para los
+    # que no hay valor transcrito. Se evalua panel por panel, porque hay
+    # momentos que solo existen en el Panel B (la frecuencia de huracan, por
+    # ejemplo, que el Panel C no reporta).
+    esperados = {m: set(meta["in_panels"])
+                 for m, meta in load_config()["moments"].items()
+                 if isinstance(meta, dict)}
+    falta = df["target"].isna() & np.array(
+        [r.panel in esperados.get(r.moment, set()) for r in df.itertuples()])
+    if falta.any():
+        paises = sorted(df.loc[falta, "iso3"].unique())
+        log(f"AVISO: sin valor objetivo del paper para {paises} "
+            f"({int(falta.sum())} momentos). Transcriba esas columnas de la "
+            f"Tabla 2 a data/targets/table2_mallucci2022_jie.csv para comparar.")
     return df
+
+
+def falta_objetivo(df: pd.DataFrame, cfg: dict) -> pd.Series:
+    """True donde el paper SI reporta ese momento en ese panel y no hay valor."""
+    esperados = {m: set(meta["in_panels"]) for m, meta in cfg["moments"].items()
+                 if isinstance(meta, dict)}
+    return df["target"].isna() & np.array(
+        [r.panel in esperados.get(r.moment, set()) for r in df.itertuples()])
 
 
 def fmt(value, digits: int) -> str:
@@ -80,7 +94,8 @@ def wide_blocks(df: pd.DataFrame, cfg: dict) -> dict[str, pd.DataFrame]:
     """Un bloque por panel: filas = momentos, columnas = pais x (paper, replica, brecha)."""
     blocks = {}
     for panel, sub in df.groupby("panel", sort=True):
-        moms = [m for m, meta in cfg["moments"].items() if panel in meta["in_panels"]]
+        moms = [m for m, meta in cfg["moments"].items()
+                if isinstance(meta, dict) and panel in meta["in_panels"]]
         paises = sorted(sub["iso3"].unique())
         rows = []
         for mom in moms:
@@ -110,7 +125,7 @@ def to_markdown(blocks: dict[str, pd.DataFrame], cfg: dict, profile: str,
         out += ["> **Perfil no reportable**: grillas gruesas, corrida de prueba del pipeline.", ""]
     for panel, block in blocks.items():
         out += [f"## Panel {panel} - {titulos.get(panel, '')}", "", md_table(block), ""]
-    sin_obj = sorted(df.loc[df["target"].isna(), "iso3"].unique())
+    sin_obj = sorted(df.loc[falta_objetivo(df, cfg), "iso3"].unique())
     if sin_obj:
         out += [f"_Sin valores objetivo transcritos para: {', '.join(sin_obj)}._", ""]
     no_ver = df["verified"].eq(False).any() if "verified" in df else False
