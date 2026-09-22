@@ -1,0 +1,109 @@
+{
+  "_doc": "Configuracion unica del pipeline. Todo lo que cambia entre corridas vive aqui; el codigo del autor en src/matlab/vendor/ NO se edita nunca.",
+
+  "seed": 20260922,
+
+  "matlab_exe": "matlab",
+
+  "profiles": {
+    "_doc": [
+      "memlite=true simula con dos rebanadas de la distribucion en vez de guardar las T_sim+1 (identico algebraicamente; imprescindible con las grillas del paper, que si no piden 15 GB de RAM).",
+      "shared_shocks=true hace que ambos motores (MATLAB y Python) lean los mismos sorteos aleatorios de build/shocks/<perfil>/. Es lo que permite comparar motores sin que la diferencia sea ruido de Monte Carlo: con sorteos distintos, dos implementaciones correctas igual dan numeros distintos."
+    ],
+
+    "paper": {
+      "_doc": "Grillas y tolerancias exactas del paquete de replica, codigo del autor sin optimizar. Requiere ~16 GB libres solo para la simulacion.",
+      "N_y": 63, "N_h": 20, "N_b_g": 150, "T_sim": 10000,
+      "maxiter_q": 600, "tol_q": 1e-06,
+      "memlite": false, "shared_shocks": false, "reportable": true
+    },
+    "paper_memlite": {
+      "_doc": "Perfil recomendado para la entrega: mismas grillas y tolerancias que 'paper', con la simulacion reescrita para no guardar la distribucion completa.",
+      "N_y": 63, "N_h": 20, "N_b_g": 150, "T_sim": 10000,
+      "maxiter_q": 600, "tol_q": 1e-06,
+      "memlite": true, "shared_shocks": false, "reportable": true
+    },
+    "paper_cmp": {
+      "_doc": "Como paper_memlite pero con sorteos compartidos: es el perfil para contrastar MATLAB vs Python con las grillas del articulo.",
+      "N_y": 63, "N_h": 20, "N_b_g": 150, "T_sim": 10000,
+      "maxiter_q": 600, "tol_q": 1e-06,
+      "memlite": true, "shared_shocks": true, "reportable": true
+    },
+    "smoke": {
+      "_doc": "Prueba rapida del pipeline con grillas gruesas. Sus numeros NO son resultados.",
+      "N_y": 21, "N_h": 6, "N_b_g": 60, "T_sim": 2000,
+      "maxiter_q": 25, "tol_q": 0.0001,
+      "memlite": false, "shared_shocks": false, "reportable": false
+    },
+    "smoke_memlite": {
+      "_doc": "Igual que 'smoke' pero con memlite. Su unico proposito es verificar que memlite reproduce 'smoke' momento a momento.",
+      "N_y": 21, "N_h": 6, "N_b_g": 60, "T_sim": 2000,
+      "maxiter_q": 25, "tol_q": 0.0001,
+      "memlite": true, "shared_shocks": false, "reportable": false
+    },
+    "smoke_cmp": {
+      "_doc": "Grillas gruesas + sorteos compartidos: prueba barata de que el motor Python reproduce al de MATLAB antes de gastar horas con las grillas del articulo.",
+      "N_y": 21, "N_h": 6, "N_b_g": 60, "T_sim": 2000,
+      "maxiter_q": 25, "tol_q": 0.0001,
+      "memlite": true, "shared_shocks": true, "reportable": false
+    }
+  },
+
+  "engines": {
+    "_doc": "Motores que resuelven el modelo. Producen el mismo conjunto de variables, asi que las etapas 3 a 7 son comunes.",
+    "matlab": {"label": "MATLAB (codigo del autor parchado)", "raw_dir": "raw_mat", "ext": ".mat"},
+    "python": {"label": "Python (port del equipo)",           "raw_dir": "raw_npz", "ext": ".npz"}
+  },
+
+  "country_sets": {
+    "_doc": "Indices del loop del autor. entrega1 = Antigua y Barbuda, Republica Dominicana, Granada, Jamaica.",
+    "entrega1": [1, 4, 5, 7],
+    "dom_jam": [4, 7],
+    "all": [1, 2, 3, 4, 5, 6, 7]
+  },
+
+  "specs": {
+    "_doc": "cc_freq y cc_int son los multiplicadores del codigo del autor sobre la frecuencia y la intensidad de huracanes: (1,1) es la economia baseline y (0,0) elimina el riesgo. inherits_gdp_mean replica que el Panel C toma E[y] del .mat del Panel B en vez de recalcularlo.",
+
+    "panelB_hurricane": {
+      "vendor_file": "climate_persistent_wf.m",
+      "paper_ref": "Mallucci (2022), Tabla 2, Panel B",
+      "label": "Con riesgo de huracan",
+      "panel": "B",
+      "depends_on": [],
+      "mat_file": "climate_persistent_wf.mat",
+      "cc_freq": 1, "cc_int": 1,
+      "inherits_gdp_mean": false
+    },
+    "panelC_no_hurricane": {
+      "vendor_file": "climate_persistent_nh_wf.m",
+      "paper_ref": "Mallucci (2022), Tabla 2, Panel C",
+      "label": "Sin riesgo de huracan",
+      "panel": "C",
+      "depends_on": ["panelB_hurricane"],
+      "mat_file": "climate_persistent_nh_wf.mat",
+      "cc_freq": 0, "cc_int": 0,
+      "inherits_gdp_mean": true
+    }
+  },
+
+  "moments": {
+    "_doc": "Mapa variable MATLAB -> momento de la Tabla 2. 'col' indica la columna cuando la variable es matriz (counter x share_counter).",
+    "spread_mean_bp":      {"var": "meanspread_sim",     "label": "Spread promedio (pb)",        "in_panels": ["B", "C"], "digits": 0},
+    "debt_gdp":            {"var": "meanBY_sim",         "label": "Deuda externa/PIB",           "in_panels": ["B", "C"], "digits": 2},
+    "hurricane_freq":      {"var": "hur_freq_sim",       "label": "Frecuencia de huracan",       "in_panels": ["B"],      "digits": 3},
+    "gdp_loss_hurricane":  {"var": "gdp_g_h_sim",        "label": "Perdida de PIB (huracan)",    "in_panels": ["B"],      "digits": 3},
+    "default_freq":        {"var": "def_freq_sim",       "label": "Frecuencia de default",       "in_panels": ["B", "C"], "digits": 3, "col": 0},
+    "debt_gdp_market":     {"var": "meanBY_sim_market",  "label": "Deuda/PIB (valor de mercado)","in_panels": [],         "digits": 2},
+    "spread_median_bp":    {"var": "medianspread_sim",   "label": "Spread mediano (pb)",         "in_panels": [],         "digits": 0}
+  },
+
+  "tolerances": {
+    "_doc": "Bandas usadas por checks.py para decidir si un momento se considera replicado. Absolutas, en unidades del momento.",
+    "spread_mean_bp": 60,
+    "debt_gdp": 0.05,
+    "hurricane_freq": 0.01,
+    "gdp_loss_hurricane": 0.01,
+    "default_freq": 0.01
+  }
+}
