@@ -1,0 +1,26 @@
+# Tabla 2 - replica vs. paper
+
+- perfil: `paper_memlite`
+- motor: MATLAB (codigo del autor parchado)
+
+## Panel B - Mallucci (2022), Tabla 2, Panel B
+
+| Momento                      | ATG paper | ATG replica | ATG brecha | DOM paper | DOM replica | DOM brecha | GRD paper | GRD replica | GRD brecha | JAM paper | JAM replica | JAM brecha |
+|------------------------------|-----------|-------------|------------|-----------|-------------|------------|-----------|-------------|------------|-----------|-------------|------------|
+| Spread promedio (pb)         | 465       | 464         | -1         | 479       | 507         | 28         | 484       | 472         | -12        | 554       | 584         | 30         |
+| Spread mediano (pb)          | 235       | 228         | -7         | 290       | 287         | -3         | 261       | 253         | -8         | 103       | 94          | -9         |
+| Deuda externa/PIB            | 0.38      | 0.38        | 0.00       | 0.25      | 0.25        | -0.00      | 0.53      | 0.52        | -0.01      | 0.49      | 0.48        | -0.01      |
+| Deuda/PIB (valor de mercado) | 0.31      | 0.32        | 0.01       | 0.22      | 0.22        | -0.00      | 0.41      | 0.41        | -0.00      | 0.43      | 0.43        | 0.00       |
+| Frecuencia de huracan        | 0.101     | 0.097       | -0.004     | 0.048     | 0.043       | -0.005     | 0.046     | 0.052       | 0.006      | 0.093     | 0.095       | 0.002      |
+| Perdida de PIB (huracan)     | -0.047    | -0.048      | -0.001     | -0.047    | -0.042      | 0.005      | -0.074    | -0.072      | 0.002      | -0.023    | -0.024      | -0.001     |
+| Frecuencia de default        | 0.061     | 0.059       | -0.002     | 0.083     | 0.086       | 0.003      | 0.057     | 0.060       | 0.003      | 0.043     | 0.042       | -0.001     |
+
+## Panel C - Mallucci (2022), Tabla 2, Panel C
+
+| Momento                      | ATG paper | ATG replica | ATG brecha | DOM paper | DOM replica | DOM brecha | GRD paper | GRD replica | GRD brecha | JAM paper | JAM replica | JAM brecha |
+|------------------------------|-----------|-------------|------------|-----------|-------------|------------|-----------|-------------|------------|-----------|-------------|------------|
+| Spread promedio (pb)         | 314       | 339         | 25         | 416       | 449         | 33         | 406       | 406         | -0         | 435       | 407         | -28        |
+| Spread mediano (pb)          | --        | --          | --         | --        | --          | --         | --        | --          | --         | --        | --          | --         |
+| Deuda externa/PIB            | 0.52      | 0.53        | 0.01       | 0.29      | 0.28        | -0.01      | 0.64      | 0.64        | 0.00       | 0.65      | 0.64        | -0.01      |
+| Deuda/PIB (valor de mercado) | 0.46      | 0.48        | 0.02       | 0.27      | 0.26        | -0.01      | 0.53      | 0.53        | 0.00       | 0.61      | 0.60        | -0.01      |
+| Frecuencia de default        | 0.050     | 0.048       | -0.002     | 0.074     | 0.080       | 0.006      | 0.051     | 0.051       | -0.000     | 0.037     | 0.038       | 0.001      |

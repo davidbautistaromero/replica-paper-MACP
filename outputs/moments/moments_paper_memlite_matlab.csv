@@ -1,0 +1,49 @@
+profile,engine,spec,panel,counter,iso3,country_es,moment,moment_label,value,source_var
+paper_memlite,matlab,panelB_hurricane,B,7,JAM,Jamaica,spread_mean_bp,Spread promedio (pb),584.1159539100238,meanspread_sim
+paper_memlite,matlab,panelB_hurricane,B,7,JAM,Jamaica,spread_median_bp,Spread mediano (pb),93.66859167583618,medianspread_sim
+paper_memlite,matlab,panelB_hurricane,B,7,JAM,Jamaica,debt_gdp,Deuda externa/PIB,0.484634640267783,meanBY_sim
+paper_memlite,matlab,panelB_hurricane,B,7,JAM,Jamaica,debt_gdp_market,Deuda/PIB (valor de mercado),0.431810846083966,meanBY_sim_market
+paper_memlite,matlab,panelB_hurricane,B,7,JAM,Jamaica,hurricane_freq,Frecuencia de huracan,0.095,hur_freq_sim
+paper_memlite,matlab,panelB_hurricane,B,7,JAM,Jamaica,gdp_loss_hurricane,Perdida de PIB (huracan),-0.0241130251254277,gdp_g_h_sim
+paper_memlite,matlab,panelB_hurricane,B,7,JAM,Jamaica,default_freq,Frecuencia de default,0.04221548043348796,def_freq_sim
+paper_memlite,matlab,panelB_hurricane,B,1,ATG,Antigua y Barbuda,spread_mean_bp,Spread promedio (pb),464.22952437958287,meanspread_sim
+paper_memlite,matlab,panelB_hurricane,B,4,DOM,Republica Dominicana,spread_mean_bp,Spread promedio (pb),507.2517675667849,meanspread_sim
+paper_memlite,matlab,panelB_hurricane,B,5,GRD,Granada,spread_mean_bp,Spread promedio (pb),472.144772721231,meanspread_sim
+paper_memlite,matlab,panelB_hurricane,B,1,ATG,Antigua y Barbuda,spread_median_bp,Spread mediano (pb),228.4745790352294,medianspread_sim
+paper_memlite,matlab,panelB_hurricane,B,4,DOM,Republica Dominicana,spread_median_bp,Spread mediano (pb),286.8151137170427,medianspread_sim
+paper_memlite,matlab,panelB_hurricane,B,5,GRD,Granada,spread_median_bp,Spread mediano (pb),253.40132402008163,medianspread_sim
+paper_memlite,matlab,panelB_hurricane,B,1,ATG,Antigua y Barbuda,debt_gdp,Deuda externa/PIB,0.38397443915016705,meanBY_sim
+paper_memlite,matlab,panelB_hurricane,B,4,DOM,Republica Dominicana,debt_gdp,Deuda externa/PIB,0.24825708894448864,meanBY_sim
+paper_memlite,matlab,panelB_hurricane,B,5,GRD,Granada,debt_gdp,Deuda externa/PIB,0.5240541478121803,meanBY_sim
+paper_memlite,matlab,panelB_hurricane,B,1,ATG,Antigua y Barbuda,debt_gdp_market,Deuda/PIB (valor de mercado),0.3151002005223917,meanBY_sim_market
+paper_memlite,matlab,panelB_hurricane,B,4,DOM,Republica Dominicana,debt_gdp_market,Deuda/PIB (valor de mercado),0.21823987985049847,meanBY_sim_market
+paper_memlite,matlab,panelB_hurricane,B,5,GRD,Granada,debt_gdp_market,Deuda/PIB (valor de mercado),0.4059787265470882,meanBY_sim_market
+paper_memlite,matlab,panelB_hurricane,B,1,ATG,Antigua y Barbuda,hurricane_freq,Frecuencia de huracan,0.0967,hur_freq_sim
+paper_memlite,matlab,panelB_hurricane,B,4,DOM,Republica Dominicana,hurricane_freq,Frecuencia de huracan,0.0432,hur_freq_sim
+paper_memlite,matlab,panelB_hurricane,B,5,GRD,Granada,hurricane_freq,Frecuencia de huracan,0.0516,hur_freq_sim
+paper_memlite,matlab,panelB_hurricane,B,1,ATG,Antigua y Barbuda,gdp_loss_hurricane,Perdida de PIB (huracan),-0.048471631127366764,gdp_g_h_sim
+paper_memlite,matlab,panelB_hurricane,B,4,DOM,Republica Dominicana,gdp_loss_hurricane,Perdida de PIB (huracan),-0.04152624822697653,gdp_g_h_sim
+paper_memlite,matlab,panelB_hurricane,B,5,GRD,Granada,gdp_loss_hurricane,Perdida de PIB (huracan),-0.07238476341784726,gdp_g_h_sim
+paper_memlite,matlab,panelB_hurricane,B,1,ATG,Antigua y Barbuda,default_freq,Frecuencia de default,0.05851024491212845,def_freq_sim
+paper_memlite,matlab,panelB_hurricane,B,4,DOM,Republica Dominicana,default_freq,Frecuencia de default,0.0860463171099702,def_freq_sim
+paper_memlite,matlab,panelB_hurricane,B,5,GRD,Granada,default_freq,Frecuencia de default,0.060396324979996474,def_freq_sim
+paper_memlite,matlab,panelC_no_hurricane,C,7,JAM,Jamaica,spread_mean_bp,Spread promedio (pb),407.1308960989672,meanspread_sim
+paper_memlite,matlab,panelC_no_hurricane,C,7,JAM,Jamaica,debt_gdp,Deuda externa/PIB,0.638646288287957,meanBY_sim
+paper_memlite,matlab,panelC_no_hurricane,C,7,JAM,Jamaica,debt_gdp_market,Deuda/PIB (valor de mercado),0.6035410223089993,meanBY_sim_market
+paper_memlite,matlab,panelC_no_hurricane,C,7,JAM,Jamaica,hurricane_freq,Frecuencia de huracan,0.0002,hur_freq_sim
+paper_memlite,matlab,panelC_no_hurricane,C,7,JAM,Jamaica,default_freq,Frecuencia de default,0.03841689935978423,def_freq_sim
+paper_memlite,matlab,panelC_no_hurricane,C,1,ATG,Antigua y Barbuda,spread_mean_bp,Spread promedio (pb),338.50747018119534,meanspread_sim
+paper_memlite,matlab,panelC_no_hurricane,C,4,DOM,Republica Dominicana,spread_mean_bp,Spread promedio (pb),448.6968521790093,meanspread_sim
+paper_memlite,matlab,panelC_no_hurricane,C,5,GRD,Granada,spread_mean_bp,Spread promedio (pb),405.9676876051905,meanspread_sim
+paper_memlite,matlab,panelC_no_hurricane,C,1,ATG,Antigua y Barbuda,debt_gdp,Deuda externa/PIB,0.530692178982272,meanBY_sim
+paper_memlite,matlab,panelC_no_hurricane,C,4,DOM,Republica Dominicana,debt_gdp,Deuda externa/PIB,0.28121822324641926,meanBY_sim
+paper_memlite,matlab,panelC_no_hurricane,C,5,GRD,Granada,debt_gdp,Deuda externa/PIB,0.6401561733688363,meanBY_sim
+paper_memlite,matlab,panelC_no_hurricane,C,1,ATG,Antigua y Barbuda,debt_gdp_market,Deuda/PIB (valor de mercado),0.4762946632752629,meanBY_sim_market
+paper_memlite,matlab,panelC_no_hurricane,C,4,DOM,Republica Dominicana,debt_gdp_market,Deuda/PIB (valor de mercado),0.2551765227234394,meanBY_sim_market
+paper_memlite,matlab,panelC_no_hurricane,C,5,GRD,Granada,debt_gdp_market,Deuda/PIB (valor de mercado),0.5347322746228247,meanBY_sim_market
+paper_memlite,matlab,panelC_no_hurricane,C,1,ATG,Antigua y Barbuda,hurricane_freq,Frecuencia de huracan,0.0002,hur_freq_sim
+paper_memlite,matlab,panelC_no_hurricane,C,4,DOM,Republica Dominicana,hurricane_freq,Frecuencia de huracan,0.0002,hur_freq_sim
+paper_memlite,matlab,panelC_no_hurricane,C,5,GRD,Granada,hurricane_freq,Frecuencia de huracan,0.0002,hur_freq_sim
+paper_memlite,matlab,panelC_no_hurricane,C,1,ATG,Antigua y Barbuda,default_freq,Frecuencia de default,0.0483961559457204,def_freq_sim
+paper_memlite,matlab,panelC_no_hurricane,C,4,DOM,Republica Dominicana,default_freq,Frecuencia de default,0.08031211953692718,def_freq_sim
+paper_memlite,matlab,panelC_no_hurricane,C,5,GRD,Granada,default_freq,Frecuencia de default,0.05088437118233612,def_freq_sim
